@@ -386,6 +386,137 @@
             opacity: 0.3;
         }
 
+        .notification {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26, 26, 46, 0.95);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+
+        .timer-display {
+            font-size: 2.5rem;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: 300;
+            color: var(--breath-blue);
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .timer-btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: none;
+            background: rgba(108, 99, 255, 0.15);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .timer-btn:hover {
+            background: rgba(108, 99, 255, 0.25);
+        }
+
+        .timer-btn.primary {
+            background: linear-gradient(45deg, var(--soft-violet), #7986ff);
+        }
+
+        .meditation-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .meditation-text {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--breath-blue);
+            min-height: 60px;
+        }
+
+        .meditation-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .sound-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .sound-option {
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sound-option:hover {
+            border-color: var(--soft-violet);
+            transform: translateY(-3px);
+        }
+
+        .sound-option i {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: block;
+            color: var(--soft-violet);
+        }
+
+        .journal-prompt {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px 0;
+            font-style: italic;
+            border-left: 3px solid var(--soft-violet);
+        }
+
+        .journal-textarea {
+            width: 100%;
+            min-height: 150px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            resize: none;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+
+        .journal-textarea:focus {
+            border: 1px solid var(--soft-violet);
+        }
+
         /* Animations */
         @keyframes ambientPulse {
             0% { opacity: 0.4; transform: scale(1); }
@@ -420,6 +551,12 @@
             30% { opacity: 1; }
             70% { opacity: 1; }
             100% { opacity: 0; }
+        }
+
+        @keyframes breatheInOut {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(0.8); }
         }
 
         /* Mobile-specific adjustments */
@@ -476,6 +613,10 @@
             .nav-item i {
                 font-size: 1.2rem;
             }
+            
+            .sound-options {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-height: 600px) {
@@ -513,6 +654,8 @@
         <!-- Cards will be dynamically injected here -->
     </div>
 
+    <div class="notification" id="notification"></div>
+
     <nav class="mobile-nav">
         <div class="nav-item active" id="nav-home">
             <i>🌌</i>
@@ -533,15 +676,16 @@
     </nav>
 
     <script>
-        // Enhanced Card templates
+        // Enhanced Card templates with interactive features
         const cardTemplates = {
             restMode: `
                 <div class="card" id="rest-card">
                     <h2>🛌 Rest Mode</h2>
-                    <p>You've been inactive for a while. Would you like to take a mindful break?</p>
-                    <div class="card-actions">
-                        <button class="btn" onclick="hideCard('rest-card')">Later</button>
-                        <button class="btn primary" onclick="startRestTimer()">Start Break</button>
+                    <p>You've been inactive for a while. Take a mindful break to recharge your mind.</p>
+                    <div class="timer-display" id="timer-display">05:00</div>
+                    <div class="timer-controls">
+                        <button class="timer-btn" onclick="pauseResumeTimer()" id="timer-control">Start</button>
+                        <button class="timer-btn primary" onclick="hideCard('rest-card')">Dismiss</button>
                     </div>
                 </div>
             `,
@@ -550,7 +694,7 @@
                 <div class="card" id="thought-card">
                     <h2>💭 Thought Vault</h2>
                     <p>You seemed to be in a flow. Capture your thoughts before they drift away...</p>
-                    <textarea class="thought-input" placeholder="Type your thoughts here..."></textarea>
+                    <textarea class="thought-input" placeholder="Type your thoughts here..." id="thought-input"></textarea>
                     <div class="card-actions">
                         <button class="btn" onclick="hideCard('thought-card')">Cancel</button>
                         <button class="btn primary" onclick="saveThought()">Save Thought</button>
@@ -563,11 +707,11 @@
                     <h2>🌀 Focus Bubble</h2>
                     <p>Your scrolling suggests you might be searching for focus. Try one of these:</p>
                     <div class="bubble-container">
-                        <div class="bubble" onclick="showMeditationPrompt()">
+                        <div class="bubble" onclick="showMeditationCard()">
                             <i>🧘</i>
                             <span>Meditate</span>
                         </div>
-                        <div class="bubble" onclick="showJournalPrompt()">
+                        <div class="bubble" onclick="showJournalCard()">
                             <i>📓</i>
                             <span>Journal</span>
                         </div>
@@ -583,9 +727,9 @@
                 <div class="card" id="anxiety-card">
                     <h2>🌬️ Calm Breath</h2>
                     <p>Your movements suggest restlessness. Follow your breath for a moment...</p>
-                    <div class="breathing-circle">
-                        <div class="breath-animation"></div>
-                        <div class="breath-text">Breathe</div>
+                    <div class="breathing-circle" id="breathing-circle">
+                        <div class="breath-animation" id="breath-animation"></div>
+                        <div class="breath-text" id="breath-text">Breathe In</div>
                     </div>
                     <div class="card-actions">
                         <button class="btn" onclick="hideCard('anxiety-card')">I'm calm</button>
@@ -603,11 +747,11 @@
                             <i>🎯</i>
                             <span>Intention</span>
                         </div>
-                        <div class="bubble" onclick="showGratitudePrompt()">
+                        <div class="bubble" onclick="showGratitudeCard()">
                             <i>🙏</i>
                             <span>Gratitude</span>
                         </div>
-                        <div class="bubble" onclick="showPlanPrompt()">
+                        <div class="bubble" onclick="showPlanCard()">
                             <i>📋</i>
                             <span>Plan</span>
                         </div>
@@ -620,11 +764,11 @@
                     <h2>🌙 Close Loop</h2>
                     <p>As the day winds down, take a moment to reflect and release...</p>
                     <div class="bubble-container">
-                        <div class="bubble" onclick="showReflectionPrompt()">
+                        <div class="bubble" onclick="showReflectionCard()">
                             <i>🔄</i>
                             <span>Reflect</span>
                         </div>
-                        <div class="bubble" onclick="showGratitudePrompt()">
+                        <div class="bubble" onclick="showGratitudeCard()">
                             <i>💖</i>
                             <span>Gratitude</span>
                         </div>
@@ -640,7 +784,7 @@
                 <div class="card" id="ai-card">
                     <h2>🧠 Mind Check</h2>
                     <p id="ai-question">How are you feeling in this moment?</p>
-                    <textarea class="thought-input" placeholder="Share your thoughts..."></textarea>
+                    <textarea class="thought-input" placeholder="Share your thoughts..." id="ai-response"></textarea>
                     <div class="card-actions">
                         <button class="btn" onclick="hideCard('ai-card')">Skip</button>
                         <button class="btn primary" onclick="saveAIResponse()">Save</button>
@@ -671,6 +815,62 @@
                         </div>
                     </div>
                 </div>
+            `,
+            
+            meditation: `
+                <div class="card" id="meditation-card">
+                    <h2>🧘 Mindful Moment</h2>
+                    <p>Take a few minutes to center yourself with this guided meditation:</p>
+                    <div class="meditation-container">
+                        <div class="meditation-text" id="meditation-text">Find a comfortable position and close your eyes...</div>
+                        <div class="meditation-controls">
+                            <button class="btn" onclick="hideCard('meditation-card')">Exit</button>
+                            <button class="btn primary" onclick="nextMeditationStep()" id="meditation-control">Begin</button>
+                        </div>
+                    </div>
+                </div>
+            `,
+            
+            journal: `
+                <div class="card" id="journal-card">
+                    <h2>📓 Journal Prompt</h2>
+                    <p>Reflect on this thought:</p>
+                    <div class="journal-prompt" id="journal-prompt">What are three things you're grateful for today?</div>
+                    <textarea class="journal-textarea" placeholder="Write your thoughts here..." id="journal-entry"></textarea>
+                    <div class="card-actions">
+                        <button class="btn" onclick="hideCard('journal-card')">Cancel</button>
+                        <button class="btn primary" onclick="saveJournalEntry()">Save Entry</button>
+                    </div>
+                </div>
+            `,
+            
+            ambientSounds: `
+                <div class="card" id="sounds-card">
+                    <h2>🎧 Ambient Soundscape</h2>
+                    <p>Select a sound to help you focus or relax:</p>
+                    <div class="sound-options">
+                        <div class="sound-option" onclick="playSound('rain')">
+                            <i>🌧️</i>
+                            <span>Rain</span>
+                        </div>
+                        <div class="sound-option" onclick="playSound('forest')">
+                            <i>🌲</i>
+                            <span>Forest</span>
+                        </div>
+                        <div class="sound-option" onclick="playSound('waves')">
+                            <i>🌊</i>
+                            <span>Waves</span>
+                        </div>
+                        <div class="sound-option" onclick="playSound('coffee')">
+                            <i>☕</i>
+                            <span>Coffee Shop</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn" onclick="stopAllSounds()">Stop Sounds</button>
+                        <button class="btn" onclick="hideCard('sounds-card')">Close</button>
+                    </div>
+                </div>
             `
         };
 
@@ -688,7 +888,14 @@
             lastActivity: Date.now(),
             userStatus: 'ambient',
             isMobile: /Mobi|Android/i.test(navigator.userAgent),
-            longPressTimer: null
+            longPressTimer: null,
+            timerInterval: null,
+            timerRunning: false,
+            timerSeconds: 300,
+            meditationStep: 0,
+            breathingPhase: 0,
+            breathingInterval: null,
+            activeSound: null
         };
 
         // DOM Elements
@@ -697,6 +904,7 @@
         const statusText = document.getElementById('status-text');
         const timeDisplay = document.getElementById('time-display');
         const gestureHint = document.getElementById('gesture-hint');
+        const notification = document.getElementById('notification');
 
         // Initialize
         function init() {
@@ -724,6 +932,16 @@
             setTimeout(() => {
                 gestureHint.style.opacity = '0';
             }, 8000);
+        }
+
+        // Show notification
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
 
         // Initialize mobile navigation
@@ -915,6 +1133,12 @@
                 card.classList.add('visible');
             }, 10);
             
+            // Special setup for certain cards
+            if (cardType === 'restMode') {
+                state.timerSeconds = 300;
+                updateTimerDisplay();
+            }
+            
             // AI prompt after 2 minutes of no interaction
             if (cardType !== 'aiPrompt') {
                 setTimeout(() => {
@@ -932,6 +1156,15 @@
                 setTimeout(() => {
                     card.remove();
                     state.activeCard = null;
+                    
+                    // Clean up any ongoing processes
+                    if (cardId === 'rest-card') {
+                        clearInterval(state.timerInterval);
+                        state.timerRunning = false;
+                    }
+                    if (cardId === 'anxiety-card') {
+                        clearInterval(state.breathingInterval);
+                    }
                 }, 400);
             }
         }
@@ -963,9 +1196,44 @@
             }, 10);
         }
 
+        // Timer functions
+        function updateTimerDisplay() {
+            const minutes = Math.floor(state.timerSeconds / 60);
+            const seconds = state.timerSeconds % 60;
+            document.getElementById('timer-display').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            state.timerRunning = true;
+            document.getElementById('timer-control').textContent = 'Pause';
+            
+            state.timerInterval = setInterval(() => {
+                state.timerSeconds--;
+                updateTimerDisplay();
+                
+                if (state.timerSeconds <= 0) {
+                    clearInterval(state.timerInterval);
+                    showNotification("Break completed! Time to return to your activities");
+                    document.getElementById('timer-control').textContent = 'Restart';
+                    state.timerRunning = false;
+                }
+            }, 1000);
+        }
+
+        function pauseResumeTimer() {
+            if (!state.timerRunning) {
+                startTimer();
+            } else {
+                clearInterval(state.timerInterval);
+                state.timerRunning = false;
+                document.getElementById('timer-control').textContent = 'Resume';
+            }
+        }
+
         // Save thought to localStorage
         function saveThought() {
-            const thought = document.querySelector('#thought-card .thought-input').value;
+            const thought = document.getElementById('thought-input').value;
             if (thought.trim()) {
                 const thoughts = JSON.parse(localStorage.getItem('thoughts') || '[]');
                 thoughts.push({
@@ -973,9 +1241,11 @@
                     timestamp: new Date().toISOString()
                 });
                 localStorage.setItem('thoughts', JSON.stringify(thoughts));
-                alert('Thought saved to your vault!');
+                showNotification('Thought saved to your vault!');
+                hideCard('thought-card');
+            } else {
+                showNotification('Please enter your thoughts before saving');
             }
-            hideCard('thought-card');
         }
 
         // Save AI response
@@ -988,21 +1258,39 @@
                     timestamp: new Date().toISOString()
                 });
                 localStorage.setItem('aiResponses', JSON.stringify(responses));
+                showNotification('Reflection saved successfully');
             }
             hideCard('ai-card');
         }
 
-        // Start rest timer
-        function startRestTimer() {
-            hideCard('rest-card');
-            alert("Rest timer started. Take a 5-minute break to stretch and breathe.");
-            // In a full implementation, we would start a timer here
-        }
-
         // Start breathing exercise
         function startBreathingExercise() {
-            alert("Breathing exercise started. Follow the visual guidance for 2 minutes.");
-            // In a full implementation, we would start a breathing animation
+            const breathText = document.getElementById('breath-text');
+            const breathAnimation = document.getElementById('breath-animation');
+            
+            breathText.textContent = "Breathe In";
+            breathAnimation.style.animation = "breatheInOut 4s infinite ease-in-out";
+            
+            state.breathingPhase = 0;
+            state.breathingInterval = setInterval(() => {
+                state.breathingPhase = (state.breathingPhase + 1) % 2;
+                if (state.breathingPhase === 0) {
+                    breathText.textContent = "Breathe In";
+                } else {
+                    breathText.textContent = "Breathe Out";
+                }
+            }, 4000);
+            
+            document.querySelector('#anxiety-card .btn.primary').textContent = "Stop Guidance";
+            document.querySelector('#anxiety-card .btn.primary').onclick = stopBreathingExercise;
+        }
+
+        function stopBreathingExercise() {
+            clearInterval(state.breathingInterval);
+            document.getElementById('breath-animation').style.animation = "none";
+            document.querySelector('#anxiety-card .btn.primary').textContent = "Guide Me";
+            document.querySelector('#anxiety-card .btn.primary').onclick = startBreathingExercise;
+            document.getElementById('breath-text').textContent = "Breathe";
         }
 
         // Mood logging
@@ -1014,7 +1302,6 @@
             });
             localStorage.setItem('moods', JSON.stringify(moods));
             
-            // Visual feedback
             const moodEmoji = {
                 'calm': '😌',
                 'focused': '🧠',
@@ -1022,26 +1309,96 @@
                 'tired': '😴'
             }[mood];
             
-            const feedback = document.createElement('div');
-            feedback.textContent = `Mood logged: ${moodEmoji}`;
-            feedback.style.position = 'fixed';
-            feedback.style.bottom = '80px';
-            feedback.style.left = '50%';
-            feedback.style.transform = 'translateX(-50%)';
-            feedback.style.background = 'rgba(26, 26, 46, 0.9)';
-            feedback.style.color = 'white';
-            feedback.style.padding = '10px 20px';
-            feedback.style.borderRadius = '20px';
-            feedback.style.zIndex = '100';
-            feedback.style.border = '1px solid rgba(108, 99, 255, 0.3)';
-            document.body.appendChild(feedback);
-            
-            setTimeout(() => {
-                feedback.style.opacity = '0';
-                setTimeout(() => feedback.remove(), 1000);
-            }, 2000);
-            
+            showNotification(`Mood logged: ${moodEmoji}`);
             hideCard('mood-card');
+        }
+
+        // Meditation functions
+        function showMeditationCard() {
+            hideCard('focus-card');
+            showCard('meditation');
+        }
+
+        const meditationSteps = [
+            "Find a comfortable position and close your eyes...",
+            "Take a deep breath in... and slowly exhale...",
+            "Notice the sensations in your body...",
+            "Observe your thoughts without judgment...",
+            "Bring your attention to your breath...",
+            "Gently return your awareness to the room..."
+        ];
+
+        function nextMeditationStep() {
+            state.meditationStep++;
+            
+            if (state.meditationStep < meditationSteps.length) {
+                document.getElementById('meditation-text').textContent = meditationSteps[state.meditationStep];
+                document.getElementById('meditation-control').textContent = "Next";
+            } else {
+                showNotification("Meditation completed. Well done!");
+                hideCard('meditation-card');
+                state.meditationStep = 0;
+            }
+        }
+
+        // Journal functions
+        function showJournalCard() {
+            hideCard('focus-card');
+            showCard('journal');
+            
+            const prompts = [
+                "What are three things you're grateful for today?",
+                "Describe a meaningful moment from your day",
+                "What challenge did you overcome today?",
+                "What are you looking forward to tomorrow?",
+                "What lesson did today teach you?"
+            ];
+            
+            const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+            document.getElementById('journal-prompt').textContent = randomPrompt;
+        }
+
+        function saveJournalEntry() {
+            const entry = document.getElementById('journal-entry').value;
+            if (entry.trim()) {
+                const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+                entries.push({
+                    prompt: document.getElementById('journal-prompt').textContent,
+                    entry: entry,
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('journalEntries', JSON.stringify(entries));
+                showNotification('Journal entry saved successfully');
+                hideCard('journal-card');
+            } else {
+                showNotification('Please write something before saving');
+            }
+        }
+
+        // Ambient sounds
+        function showAmbientSounds() {
+            hideCard('focus-card');
+            showCard('ambientSounds');
+        }
+
+        function playSound(type) {
+            // In a real implementation, we would play actual sounds
+            const soundNames = {
+                'rain': 'Gentle Rain',
+                'forest': 'Forest Ambience',
+                'waves': 'Ocean Waves',
+                'coffee': 'Coffee Shop'
+            };
+            
+            showNotification(`Playing: ${soundNames[type]}`);
+            state.activeSound = type;
+        }
+
+        function stopAllSounds() {
+            if (state.activeSound) {
+                showNotification('Sounds stopped');
+                state.activeSound = null;
+            }
         }
 
         // Initialize when DOM is loaded
