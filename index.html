@@ -517,6 +517,45 @@
             border: 1px solid var(--soft-violet);
         }
 
+        .progress-ring {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 20px auto;
+        }
+
+        .progress-ring-circle {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.5s;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            color: var(--breath-blue);
+        }
+
+        .intention-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            margin: 15px 0;
+            outline: none;
+        }
+
+        .intention-input:focus {
+            border: 1px solid var(--soft-violet);
+        }
+
         /* Animations */
         @keyframes ambientPulse {
             0% { opacity: 0.4; transform: scale(1); }
@@ -733,7 +772,7 @@
                     </div>
                     <div class="card-actions">
                         <button class="btn" onclick="hideCard('anxiety-card')">I'm calm</button>
-                        <button class="btn primary" onclick="startBreathingExercise()">Guide Me</button>
+                        <button class="btn primary" onclick="startBreathingExercise()" id="breath-btn">Guide Me</button>
                     </div>
                 </div>
             `,
@@ -743,7 +782,7 @@
                     <h2>🌅 Mind Setup</h2>
                     <p>Good morning! How would you like to set the tone for your day?</p>
                     <div class="bubble-container">
-                        <div class="bubble" onclick="setIntention()">
+                        <div class="bubble" onclick="showIntentionCard()">
                             <i>🎯</i>
                             <span>Intention</span>
                         </div>
@@ -869,6 +908,18 @@
                     <div class="card-actions">
                         <button class="btn" onclick="stopAllSounds()">Stop Sounds</button>
                         <button class="btn" onclick="hideCard('sounds-card')">Close</button>
+                    </div>
+                </div>
+            `,
+            
+            intention: `
+                <div class="card" id="intention-card">
+                    <h2>🎯 Set Your Intention</h2>
+                    <p>What would you like to focus on today? Set your intention:</p>
+                    <input type="text" class="intention-input" id="intention-input" placeholder="Today I will focus on...">
+                    <div class="card-actions">
+                        <button class="btn" onclick="hideCard('intention-card')">Cancel</button>
+                        <button class="btn primary" onclick="saveIntention()">Set Intention</button>
                     </div>
                 </div>
             `
@@ -1281,15 +1332,15 @@
                 }
             }, 4000);
             
-            document.querySelector('#anxiety-card .btn.primary').textContent = "Stop Guidance";
-            document.querySelector('#anxiety-card .btn.primary').onclick = stopBreathingExercise;
+            document.getElementById('breath-btn').textContent = "Stop Guidance";
+            document.getElementById('breath-btn').onclick = stopBreathingExercise;
         }
 
         function stopBreathingExercise() {
             clearInterval(state.breathingInterval);
             document.getElementById('breath-animation').style.animation = "none";
-            document.querySelector('#anxiety-card .btn.primary').textContent = "Guide Me";
-            document.querySelector('#anxiety-card .btn.primary').onclick = startBreathingExercise;
+            document.getElementById('breath-btn').textContent = "Guide Me";
+            document.getElementById('breath-btn').onclick = startBreathingExercise;
             document.getElementById('breath-text').textContent = "Breathe";
         }
 
@@ -1398,6 +1449,23 @@
             if (state.activeSound) {
                 showNotification('Sounds stopped');
                 state.activeSound = null;
+            }
+        }
+
+        // Intention setting
+        function showIntentionCard() {
+            hideCard('morning-card');
+            showCard('intention');
+        }
+
+        function saveIntention() {
+            const intention = document.getElementById('intention-input').value;
+            if (intention.trim()) {
+                localStorage.setItem('dailyIntention', intention);
+                showNotification(`Intention set: ${intention}`);
+                hideCard('intention-card');
+            } else {
+                showNotification('Please enter your intention');
             }
         }
 
