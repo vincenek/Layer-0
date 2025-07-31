@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#101024">
     <title>Layer 0: Drift Alpha</title>
     <link rel="manifest" href="manifest.json">
@@ -14,14 +14,16 @@
             --soft-violet: #6c63ff;
             --glow-violet: rgba(108, 99, 255, 0.2);
             --breath-blue: #4fc3f7;
-            --card-width: 320px;
+            --card-width: min(90vw, 380px);
             --transition-speed: 0.4s;
+            --mobile-breakpoint: 768px;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -63,7 +65,7 @@
         .card {
             position: absolute;
             width: var(--card-width);
-            background: rgba(26, 26, 46, 0.85);
+            background: rgba(26, 26, 46, 0.9);
             backdrop-filter: blur(12px);
             border-radius: 20px;
             padding: 25px;
@@ -119,11 +121,13 @@
             display: flex;
             gap: 12px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .btn {
             flex: 1;
-            padding: 12px 20px;
+            min-width: 120px;
+            padding: 14px 20px;
             border-radius: 12px;
             border: none;
             background: rgba(108, 99, 255, 0.15);
@@ -133,6 +137,7 @@
             transition: all 0.3s ease;
             outline: none;
             font-size: 0.9rem;
+            min-height: 48px;
         }
 
         .btn:hover {
@@ -168,8 +173,9 @@
         .bubble-container {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             margin: 25px 0;
+            flex-wrap: wrap;
         }
 
         .bubble {
@@ -281,6 +287,7 @@
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.7);
             z-index: 5;
+            text-align: right;
         }
 
         .welcome-message {
@@ -293,10 +300,11 @@
             padding: 30px;
             z-index: 0;
             opacity: 0.6;
+            width: 90%;
         }
 
         .welcome-message h1 {
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
             font-weight: 700;
             margin-bottom: 20px;
             background: linear-gradient(45deg, #ffffff, var(--breath-blue));
@@ -306,9 +314,76 @@
         }
 
         .welcome-message p {
-            font-size: 1.1rem;
+            font-size: clamp(0.9rem, 3.5vw, 1.1rem);
             line-height: 1.7;
             color: rgba(255, 255, 255, 0.6);
+        }
+
+        .gesture-hint {
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            z-index: 2;
+            animation: fadeHint 8s infinite;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            background: rgba(16, 16, 36, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 10px;
+            z-index: 20;
+            border-top: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item i {
+            font-size: 1.4rem;
+            color: var(--soft-violet);
+        }
+
+        .nav-item.active {
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        .nav-item.active i {
+            color: var(--breath-blue);
+            text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+        }
+
+        .neuro-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at center, transparent 0%, rgba(16, 16, 36, 0.9) 100%),
+                linear-gradient(rgba(108, 99, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(108, 99, 255, 0.1) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            background-position: center;
+            z-index: -2;
+            opacity: 0.3;
         }
 
         /* Animations */
@@ -340,20 +415,76 @@
             100% { transform: scale(0.8); opacity: 0.2; }
         }
 
-        /* Responsive design */
+        @keyframes fadeHint {
+            0% { opacity: 0; }
+            30% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Mobile-specific adjustments */
         @media (max-width: 768px) {
             .card {
-                width: 90%;
-                max-width: var(--card-width);
+                padding: 20px;
+                border-radius: 18px;
             }
             
-            .bubble-container {
-                flex-wrap: wrap;
+            .card h2 {
+                font-size: 1.3rem;
+            }
+            
+            .card p {
+                font-size: 0.9rem;
+            }
+            
+            .btn {
+                min-width: 100%;
+                padding: 12px;
+                margin-bottom: 8px;
             }
             
             .bubble {
                 width: 70px;
                 height: 70px;
+            }
+            
+            .bubble i {
+                font-size: 1.5rem;
+            }
+            
+            .breathing-circle {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .status-bar, .time-display {
+                top: 15px;
+            }
+            
+            .time-display {
+                font-size: 0.8rem;
+            }
+            
+            .mobile-nav {
+                padding: 12px 5px;
+            }
+            
+            .nav-item {
+                font-size: 0.7rem;
+            }
+            
+            .nav-item i {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .welcome-message {
+                top: 45%;
+            }
+            
+            .gesture-hint {
+                bottom: 20px;
             }
         }
     </style>
@@ -361,6 +492,7 @@
 <body>
     <div id="layer0">
         <div class="ambient-bg"></div>
+        <div class="neuro-grid"></div>
         
         <!-- Welcome Message -->
         <div class="welcome-message">
@@ -376,11 +508,32 @@
         
         <div class="time-display" id="time-display"></div>
         
+        <div class="gesture-hint" id="gesture-hint">Touch and hold to access subconscious menu</div>
+        
         <!-- Cards will be dynamically injected here -->
     </div>
 
+    <nav class="mobile-nav">
+        <div class="nav-item active" id="nav-home">
+            <i>🌌</i>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" id="nav-thoughts">
+            <i>💭</i>
+            <span>Thoughts</span>
+        </div>
+        <div class="nav-item" id="nav-mood">
+            <i>😌</i>
+            <span>Mood</span>
+        </div>
+        <div class="nav-item" id="nav-settings">
+            <i>⚙️</i>
+            <span>Settings</span>
+        </div>
+    </nav>
+
     <script>
-        // Card templates
+        // Enhanced Card templates
         const cardTemplates = {
             restMode: `
                 <div class="card" id="rest-card">
@@ -418,9 +571,9 @@
                             <i>📓</i>
                             <span>Journal</span>
                         </div>
-                        <div class="bubble" onclick="hideCard('focus-card')">
+                        <div class="bubble" onclick="showAmbientSounds()">
                             <i>🎧</i>
-                            <span>Music</span>
+                            <span>Sounds</span>
                         </div>
                     </div>
                 </div>
@@ -493,22 +646,49 @@
                         <button class="btn primary" onclick="saveAIResponse()">Save</button>
                     </div>
                 </div>
+            `,
+            
+            moodLog: `
+                <div class="card" id="mood-card">
+                    <h2>😌 Mood Log</h2>
+                    <p>How are you feeling right now? Select your current state:</p>
+                    <div class="bubble-container">
+                        <div class="bubble" onclick="logMood('calm')">
+                            <i>😌</i>
+                            <span>Calm</span>
+                        </div>
+                        <div class="bubble" onclick="logMood('focused')">
+                            <i>🧠</i>
+                            <span>Focused</span>
+                        </div>
+                        <div class="bubble" onclick="logMood('energetic')">
+                            <i>⚡</i>
+                            <span>Energetic</span>
+                        </div>
+                        <div class="bubble" onclick="logMood('tired')">
+                            <i>😴</i>
+                            <span>Tired</span>
+                        </div>
+                    </div>
+                </div>
             `
         };
 
-        // State management
+        // Enhanced State management
         let state = {
             activeCard: null,
             idleTimer: null,
             typingTimer: null,
-            lastMousePosition: { x: 0, y: 0 },
-            mouseSpeed: 0,
-            mouseSpeeds: [],
+            lastTouchPosition: { x: 0, y: 0 },
+            touchSpeed: 0,
+            touchSpeeds: [],
             scrollSpeeds: [],
             lastScrollPosition: 0,
             lastScrollTime: 0,
             lastActivity: Date.now(),
-            userStatus: 'ambient'
+            userStatus: 'ambient',
+            isMobile: /Mobi|Android/i.test(navigator.userAgent),
+            longPressTimer: null
         };
 
         // DOM Elements
@@ -516,6 +696,7 @@
         const activityIndicator = document.getElementById('activity-indicator');
         const statusText = document.getElementById('status-text');
         const timeDisplay = document.getElementById('time-display');
+        const gestureHint = document.getElementById('gesture-hint');
 
         // Initialize
         function init() {
@@ -535,6 +716,33 @@
             
             // Start idle detection
             resetIdleTimer();
+            
+            // Initialize mobile nav
+            initMobileNav();
+            
+            // Hide gesture hint after delay
+            setTimeout(() => {
+                gestureHint.style.opacity = '0';
+            }, 8000);
+        }
+
+        // Initialize mobile navigation
+        function initMobileNav() {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.nav-item').forEach(nav => {
+                        nav.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    const id = this.id;
+                    if (id === 'nav-thoughts') {
+                        showCard('thoughtVault');
+                    } else if (id === 'nav-mood') {
+                        showCard('moodLog');
+                    }
+                });
+            });
         }
 
         // Update time display
@@ -542,84 +750,100 @@
             const now = new Date();
             const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const dateString = now.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
-            timeDisplay.textContent = `${dateString} • ${timeString}`;
+            timeDisplay.textContent = `${dateString}\n${timeString}`;
         }
 
         // Set up event listeners
         function setupEventListeners() {
             // Mouse movement tracking
-            document.addEventListener('mousemove', (e) => {
-                handleMouseMove(e);
-                resetIdleTimer();
-            });
+            document.addEventListener('mousemove', handleActivity);
+            
+            // Touch movement tracking
+            document.addEventListener('touchstart', handleTouchStart);
+            document.addEventListener('touchmove', handleTouchMove);
             
             // Keyboard activity
-            document.addEventListener('keydown', () => {
-                handleTyping();
-                resetIdleTimer();
-            });
+            document.addEventListener('keydown', handleActivity);
             
             // Scroll activity
-            document.addEventListener('scroll', () => {
-                handleScroll();
-                resetIdleTimer();
-            });
+            document.addEventListener('scroll', handleScroll);
             
-            // Touch activity
-            document.addEventListener('touchstart', resetIdleTimer);
+            // Long press for mobile
+            document.addEventListener('touchstart', handleLongPressStart);
+            document.addEventListener('touchend', handleLongPressEnd);
+            
+            // Click to clear hint
+            document.addEventListener('click', () => {
+                gestureHint.style.opacity = '0';
+            });
         }
 
-        // Mouse movement analysis
-        function handleMouseMove(e) {
+        // Touch start handler
+        function handleTouchStart(e) {
+            const touch = e.touches[0];
+            state.lastTouchPosition = { x: touch.clientX, y: touch.clientY };
+            state.lastActivity = Date.now();
+            resetIdleTimer();
+        }
+
+        // Touch move handler
+        function handleTouchMove(e) {
+            const touch = e.touches[0];
             const now = Date.now();
             const timeDiff = now - state.lastActivity;
             
-            if (state.lastMousePosition.x !== 0 && timeDiff > 50) {
-                const distance = Math.sqrt(
-                    Math.pow(e.clientX - state.lastMousePosition.x, 2) +
-                    Math.pow(e.clientY - state.lastMousePosition.y, 2)
-                );
-                
-                state.mouseSpeed = distance / timeDiff;
-                state.mouseSpeeds.push(state.mouseSpeed);
-                
-                // Keep only the last 10 measurements
-                if (state.mouseSpeeds.length > 10) {
-                    state.mouseSpeeds.shift();
-                }
-                
-                // Detect erratic movement (anxiety)
-                const avgSpeed = state.mouseSpeeds.reduce((a, b) => a + b, 0) / state.mouseSpeeds.length;
-                const variance = state.mouseSpeeds.reduce((a, b) => a + Math.pow(b - avgSpeed, 2), 0) / state.mouseSpeeds.length;
-                
-                if (variance > 1 && avgSpeed > 0.5 && state.userStatus !== 'anxious') {
-                    setUserStatus('anxious');
-                    if (!state.activeCard) {
-                        showCard('anxietyMode');
-                    }
-                } else if (state.userStatus === 'anxious' && variance < 0.5 && avgSpeed < 0.3) {
-                    setUserStatus('ambient');
-                }
+            const distance = Math.sqrt(
+                Math.pow(touch.clientX - state.lastTouchPosition.x, 2) +
+                Math.pow(touch.clientY - state.lastTouchPosition.y, 2)
+            );
+            
+            state.touchSpeed = distance / timeDiff;
+            state.touchSpeeds.push(state.touchSpeed);
+            
+            // Keep only the last 10 measurements
+            if (state.touchSpeeds.length > 10) {
+                state.touchSpeeds.shift();
             }
             
-            state.lastMousePosition = { x: e.clientX, y: e.clientY };
+            // Detect erratic movement (anxiety)
+            const avgSpeed = state.touchSpeeds.reduce((a, b) => a + b, 0) / state.touchSpeeds.length;
+            const variance = state.touchSpeeds.reduce((a, b) => a + Math.pow(b - avgSpeed, 2), 0) / state.touchSpeeds.length;
+            
+            if (variance > 1 && avgSpeed > 0.5 && state.userStatus !== 'anxious') {
+                setUserStatus('anxious');
+                if (!state.activeCard) {
+                    showCard('anxietyMode');
+                }
+            } else if (state.userStatus === 'anxious' && variance < 0.5 && avgSpeed < 0.3) {
+                setUserStatus('ambient');
+            }
+            
+            state.lastTouchPosition = { x: touch.clientX, y: touch.clientY };
             state.lastActivity = now;
         }
 
-        // Typing cadence detection
-        function handleTyping() {
-            clearTimeout(state.typingTimer);
-            state.typingTimer = setTimeout(() => {
+        // Handle activity (mouse and keyboard)
+        function handleActivity() {
+            resetIdleTimer();
+        }
+
+        // Long press handling for mobile
+        function handleLongPressStart(e) {
+            state.longPressTimer = setTimeout(() => {
                 if (!state.activeCard) {
-                    showCard('thoughtVault');
+                    showCard('moodLog');
                 }
-            }, 5000);
+            }, 800);
+        }
+
+        function handleLongPressEnd() {
+            clearTimeout(state.longPressTimer);
         }
 
         // Scroll behavior detection
         function handleScroll() {
             const now = Date.now();
-            const scrollPosition = window.scrollY;
+            const scrollPosition = window.scrollY || document.documentElement.scrollTop;
             
             if (state.lastScrollPosition !== 0) {
                 const distance = Math.abs(scrollPosition - state.lastScrollPosition);
@@ -646,6 +870,7 @@
             
             state.lastScrollPosition = scrollPosition;
             state.lastScrollTime = now;
+            resetIdleTimer();
         }
 
         // Idle detection
@@ -778,6 +1003,45 @@
         function startBreathingExercise() {
             alert("Breathing exercise started. Follow the visual guidance for 2 minutes.");
             // In a full implementation, we would start a breathing animation
+        }
+
+        // Mood logging
+        function logMood(mood) {
+            const moods = JSON.parse(localStorage.getItem('moods') || '[]');
+            moods.push({
+                mood: mood,
+                timestamp: new Date().toISOString()
+            });
+            localStorage.setItem('moods', JSON.stringify(moods));
+            
+            // Visual feedback
+            const moodEmoji = {
+                'calm': '😌',
+                'focused': '🧠',
+                'energetic': '⚡',
+                'tired': '😴'
+            }[mood];
+            
+            const feedback = document.createElement('div');
+            feedback.textContent = `Mood logged: ${moodEmoji}`;
+            feedback.style.position = 'fixed';
+            feedback.style.bottom = '80px';
+            feedback.style.left = '50%';
+            feedback.style.transform = 'translateX(-50%)';
+            feedback.style.background = 'rgba(26, 26, 46, 0.9)';
+            feedback.style.color = 'white';
+            feedback.style.padding = '10px 20px';
+            feedback.style.borderRadius = '20px';
+            feedback.style.zIndex = '100';
+            feedback.style.border = '1px solid rgba(108, 99, 255, 0.3)';
+            document.body.appendChild(feedback);
+            
+            setTimeout(() => {
+                feedback.style.opacity = '0';
+                setTimeout(() => feedback.remove(), 1000);
+            }, 2000);
+            
+            hideCard('mood-card');
         }
 
         // Initialize when DOM is loaded
