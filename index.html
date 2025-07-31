@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101024">
+    <title>Layer 0: Drift Alpha</title>
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-indigo: #101024;
+            --neural-grey: #1a1a2e;
+            --soft-violet: #6c63ff;
+            --glow-violet: rgba(108, 99, 255, 0.2);
+            --breath-blue: #4fc3f7;
+            --card-width: 320px;
+            --transition-speed: 0.4s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at center, var(--deep-indigo) 0%, #000000 100%);
+            color: rgba(255, 255, 255, 0.85);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            touch-action: manipulation;
+        }
+
+        #layer0 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+            z-index: 1;
+        }
+
+        .ambient-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(108, 99, 255, 0.05) 0%, transparent 70%);
+            opacity: 0.7;
+            z-index: -1;
+            animation: ambientPulse 15s infinite alternate;
+        }
+
+        .card {
+            position: absolute;
+            width: var(--card-width);
+            background: rgba(26, 26, 46, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
+                        0 0 0 1px rgba(108, 99, 255, 0.3),
+                        0 0 30px 5px var(--glow-violet);
+            transform: translateY(20px) scale(0.95);
+            opacity: 0;
+            transition: all var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+            overflow: hidden;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            animation: cardFloat 6s infinite alternate ease-in-out;
+        }
+
+        .card.visible {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--soft-violet), var(--breath-blue));
+        }
+
+        .card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #ffffff;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .card-content {
+            padding: 10px 0;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(108, 99, 255, 0.15);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: rgba(108, 99, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .btn.primary {
+            background: linear-gradient(45deg, var(--soft-violet), #7986ff);
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+
+        .thought-input {
+            width: 100%;
+            min-height: 120px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            resize: none;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+
+        .thought-input:focus {
+            border: 1px solid var(--soft-violet);
+        }
+
+        .bubble-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .bubble {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neural-grey), var(--deep-indigo));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3),
+                        0 0 0 1px rgba(108, 99, 255, 0.2),
+                        inset 0 0 10px rgba(108, 99, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .bubble:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4),
+                        0 0 0 1px rgba(108, 99, 255, 0.4);
+        }
+
+        .bubble i {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            color: var(--soft-violet);
+        }
+
+        .bubble span {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .breathing-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            margin: 30px auto;
+            background: radial-gradient(circle, rgba(26, 26, 46, 0.8) 0%, rgba(16, 16, 36, 0.9) 70%);
+            border: 2px solid rgba(108, 99, 255, 0.3);
+            box-shadow: 0 0 30px rgba(108, 99, 255, 0.2),
+                        inset 0 0 20px rgba(108, 99, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .breath-animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(79, 195, 247, 0.15) 0%, transparent 70%);
+            animation: breathPulse 8s infinite ease-in-out;
+        }
+
+        .breath-text {
+            font-size: 1.5rem;
+            font-weight: 500;
+            z-index: 2;
+            color: var(--breath-blue);
+        }
+
+        .status-bar {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 5;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--soft-violet);
+            box-shadow: 0 0 10px var(--soft-violet);
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.idle {
+            background: #ff9800;
+            box-shadow: 0 0 10px #ff9800;
+        }
+
+        .status-indicator.anxious {
+            background: #f44336;
+            box-shadow: 0 0 10px #f44336;
+            animation: anxiousPulse 1.5s infinite;
+        }
+
+        .status-text {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .time-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            z-index: 5;
+        }
+
+        .welcome-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            max-width: 500px;
+            padding: 30px;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .welcome-message h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ffffff, var(--breath-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .welcome-message p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Animations */
+        @keyframes ambientPulse {
+            0% { opacity: 0.4; transform: scale(1); }
+            100% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        @keyframes cardFloat {
+            0% { transform: translateY(0) rotate(0.5deg); }
+            100% { transform: translateY(-10px) rotate(-0.5deg); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.6; transform: scale(1); }
+        }
+
+        @keyframes anxiousPulse {
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.3; transform: scale(1); }
+        }
+
+        @keyframes breathPulse {
+            0% { transform: scale(0.8); opacity: 0.2; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+            100% { transform: scale(0.8); opacity: 0.2; }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .card {
+                width: 90%;
+                max-width: var(--card-width);
+            }
+            
+            .bubble-container {
+                flex-wrap: wrap;
+            }
+            
+            .bubble {
+                width: 70px;
+                height: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="layer0">
+        <div class="ambient-bg"></div>
+        
+        <!-- Welcome Message -->
+        <div class="welcome-message">
+            <h1>Layer 0: Drift Alpha</h1>
+            <p>The subconscious operating system that responds to your presence, behavior, and rhythm</p>
+        </div>
+        
+        <!-- Status Indicators -->
+        <div class="status-bar">
+            <div class="status-indicator" id="activity-indicator"></div>
+            <div class="status-text" id="status-text">Ambient</div>
+        </div>
+        
+        <div class="time-display" id="time-display"></div>
+        
+        <!-- Cards will be dynamically injected here -->
+    </div>
+
+    <script>
+        // Card templates
+        const cardTemplates = {
+            restMode: `
+                <div class="card" id="rest-card">
+                    <h2>🛌 Rest Mode</h2>
+                    <p>You've been inactive for a while. Would you like to take a mindful break?</p>
+                    <div class="card-actions">
+                        <button class="btn" onclick="hideCard('rest-card')">Later</button>
+                        <button class="btn primary" onclick="startRestTimer()">Start Break</button>
+                    </div>
+                </div>
+            `,
+            
+            thoughtVault: `
+                <div class="card" id="thought-card">
+                    <h2>💭 Thought Vault</h2>
+                    <p>You seemed to be in a flow. Capture your thoughts before they drift away...</p>
+                    <textarea class="thought-input" placeholder="Type your thoughts here..."></textarea>
+                    <div class="card-actions">
+                        <button class="btn" onclick="hideCard('thought-card')">Cancel</button>
+                        <button class="btn primary" onclick="saveThought()">Save Thought</button>
+                    </div>
+                </div>
+            `,
+            
+            focusBubble: `
+                <div class="card" id="focus-card">
+                    <h2>🌀 Focus Bubble</h2>
+                    <p>Your scrolling suggests you might be searching for focus. Try one of these:</p>
+                    <div class="bubble-container">
+                        <div class="bubble" onclick="showMeditationPrompt()">
+                            <i>🧘</i>
+                            <span>Meditate</span>
+                        </div>
+                        <div class="bubble" onclick="showJournalPrompt()">
+                            <i>📓</i>
+                            <span>Journal</span>
+                        </div>
+                        <div class="bubble" onclick="hideCard('focus-card')">
+                            <i>🎧</i>
+                            <span>Music</span>
+                        </div>
+                    </div>
+                </div>
+            `,
+            
+            anxietyMode: `
+                <div class="card" id="anxiety-card">
+                    <h2>🌬️ Calm Breath</h2>
+                    <p>Your movements suggest restlessness. Follow your breath for a moment...</p>
+                    <div class="breathing-circle">
+                        <div class="breath-animation"></div>
+                        <div class="breath-text">Breathe</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn" onclick="hideCard('anxiety-card')">I'm calm</button>
+                        <button class="btn primary" onclick="startBreathingExercise()">Guide Me</button>
+                    </div>
+                </div>
+            `,
+            
+            morningMode: `
+                <div class="card" id="morning-card">
+                    <h2>🌅 Mind Setup</h2>
+                    <p>Good morning! How would you like to set the tone for your day?</p>
+                    <div class="bubble-container">
+                        <div class="bubble" onclick="setIntention()">
+                            <i>🎯</i>
+                            <span>Intention</span>
+                        </div>
+                        <div class="bubble" onclick="showGratitudePrompt()">
+                            <i>🙏</i>
+                            <span>Gratitude</span>
+                        </div>
+                        <div class="bubble" onclick="showPlanPrompt()">
+                            <i>📋</i>
+                            <span>Plan</span>
+                        </div>
+                    </div>
+                </div>
+            `,
+            
+            nightMode: `
+                <div class="card" id="night-card">
+                    <h2>🌙 Close Loop</h2>
+                    <p>As the day winds down, take a moment to reflect and release...</p>
+                    <div class="bubble-container">
+                        <div class="bubble" onclick="showReflectionPrompt()">
+                            <i>🔄</i>
+                            <span>Reflect</span>
+                        </div>
+                        <div class="bubble" onclick="showGratitudePrompt()">
+                            <i>💖</i>
+                            <span>Gratitude</span>
+                        </div>
+                        <div class="bubble" onclick="setWindDown()">
+                            <i>⏳</i>
+                            <span>Wind Down</span>
+                        </div>
+                    </div>
+                </div>
+            `,
+            
+            aiPrompt: `
+                <div class="card" id="ai-card">
+                    <h2>🧠 Mind Check</h2>
+                    <p id="ai-question">How are you feeling in this moment?</p>
+                    <textarea class="thought-input" placeholder="Share your thoughts..."></textarea>
+                    <div class="card-actions">
+                        <button class="btn" onclick="hideCard('ai-card')">Skip</button>
+                        <button class="btn primary" onclick="saveAIResponse()">Save</button>
+                    </div>
+                </div>
+            `
+        };
+
+        // State management
+        let state = {
+            activeCard: null,
+            idleTimer: null,
+            typingTimer: null,
+            lastMousePosition: { x: 0, y: 0 },
+            mouseSpeed: 0,
+            mouseSpeeds: [],
+            scrollSpeeds: [],
+            lastScrollPosition: 0,
+            lastScrollTime: 0,
+            lastActivity: Date.now(),
+            userStatus: 'ambient'
+        };
+
+        // DOM Elements
+        const layer0 = document.getElementById('layer0');
+        const activityIndicator = document.getElementById('activity-indicator');
+        const statusText = document.getElementById('status-text');
+        const timeDisplay = document.getElementById('time-display');
+
+        // Initialize
+        function init() {
+            updateTimeDisplay();
+            setInterval(updateTimeDisplay, 60000);
+            
+            // Set time-based card
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour < 12) {
+                showCard('morningMode');
+            } else if (hour >= 21 || hour < 5) {
+                showCard('nightMode');
+            }
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Start idle detection
+            resetIdleTimer();
+        }
+
+        // Update time display
+        function updateTimeDisplay() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateString = now.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
+            timeDisplay.textContent = `${dateString} • ${timeString}`;
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Mouse movement tracking
+            document.addEventListener('mousemove', (e) => {
+                handleMouseMove(e);
+                resetIdleTimer();
+            });
+            
+            // Keyboard activity
+            document.addEventListener('keydown', () => {
+                handleTyping();
+                resetIdleTimer();
+            });
+            
+            // Scroll activity
+            document.addEventListener('scroll', () => {
+                handleScroll();
+                resetIdleTimer();
+            });
+            
+            // Touch activity
+            document.addEventListener('touchstart', resetIdleTimer);
+        }
+
+        // Mouse movement analysis
+        function handleMouseMove(e) {
+            const now = Date.now();
+            const timeDiff = now - state.lastActivity;
+            
+            if (state.lastMousePosition.x !== 0 && timeDiff > 50) {
+                const distance = Math.sqrt(
+                    Math.pow(e.clientX - state.lastMousePosition.x, 2) +
+                    Math.pow(e.clientY - state.lastMousePosition.y, 2)
+                );
+                
+                state.mouseSpeed = distance / timeDiff;
+                state.mouseSpeeds.push(state.mouseSpeed);
+                
+                // Keep only the last 10 measurements
+                if (state.mouseSpeeds.length > 10) {
+                    state.mouseSpeeds.shift();
+                }
+                
+                // Detect erratic movement (anxiety)
+                const avgSpeed = state.mouseSpeeds.reduce((a, b) => a + b, 0) / state.mouseSpeeds.length;
+                const variance = state.mouseSpeeds.reduce((a, b) => a + Math.pow(b - avgSpeed, 2), 0) / state.mouseSpeeds.length;
+                
+                if (variance > 1 && avgSpeed > 0.5 && state.userStatus !== 'anxious') {
+                    setUserStatus('anxious');
+                    if (!state.activeCard) {
+                        showCard('anxietyMode');
+                    }
+                } else if (state.userStatus === 'anxious' && variance < 0.5 && avgSpeed < 0.3) {
+                    setUserStatus('ambient');
+                }
+            }
+            
+            state.lastMousePosition = { x: e.clientX, y: e.clientY };
+            state.lastActivity = now;
+        }
+
+        // Typing cadence detection
+        function handleTyping() {
+            clearTimeout(state.typingTimer);
+            state.typingTimer = setTimeout(() => {
+                if (!state.activeCard) {
+                    showCard('thoughtVault');
+                }
+            }, 5000);
+        }
+
+        // Scroll behavior detection
+        function handleScroll() {
+            const now = Date.now();
+            const scrollPosition = window.scrollY;
+            
+            if (state.lastScrollPosition !== 0) {
+                const distance = Math.abs(scrollPosition - state.lastScrollPosition);
+                const timeDiff = now - state.lastScrollTime;
+                const speed = distance / timeDiff;
+                
+                state.scrollSpeeds.push(speed);
+                
+                // Keep only the last 5 measurements
+                if (state.scrollSpeeds.length > 5) {
+                    state.scrollSpeeds.shift();
+                }
+                
+                // Detect fast scrolling followed by stop
+                if (speed > 2 && state.scrollSpeeds.length > 2) {
+                    setTimeout(() => {
+                        const currentSpeed = state.scrollSpeeds[state.scrollSpeeds.length - 1];
+                        if (currentSpeed < 0.1 && !state.activeCard) {
+                            showCard('focusBubble');
+                        }
+                    }, 1000);
+                }
+            }
+            
+            state.lastScrollPosition = scrollPosition;
+            state.lastScrollTime = now;
+        }
+
+        // Idle detection
+        function resetIdleTimer() {
+            clearTimeout(state.idleTimer);
+            state.idleTimer = setTimeout(() => {
+                if (!state.activeCard) {
+                    showCard('restMode');
+                }
+                setUserStatus('idle');
+            }, 30000);
+            
+            setUserStatus('ambient');
+            state.lastActivity = Date.now();
+        }
+
+        // Set user status
+        function setUserStatus(status) {
+            state.userStatus = status;
+            activityIndicator.className = 'status-indicator ' + status;
+            statusText.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+        }
+
+        // Card management
+        function showCard(cardType) {
+            // Hide any existing card
+            if (state.activeCard) {
+                hideCard(state.activeCard);
+            }
+            
+            // Create new card
+            const cardHTML = cardTemplates[cardType];
+            layer0.insertAdjacentHTML('beforeend', cardHTML);
+            
+            // Get reference to the new card
+            const cardId = cardType.replace('Mode', '').toLowerCase() + '-card';
+            const card = document.getElementById(cardId);
+            state.activeCard = cardId;
+            
+            // Animate in
+            setTimeout(() => {
+                card.classList.add('visible');
+            }, 10);
+            
+            // AI prompt after 2 minutes of no interaction
+            if (cardType !== 'aiPrompt') {
+                setTimeout(() => {
+                    if (state.activeCard === cardId) {
+                        showAIPrompt();
+                    }
+                }, 120000);
+            }
+        }
+
+        function hideCard(cardId) {
+            const card = document.getElementById(cardId);
+            if (card) {
+                card.classList.remove('visible');
+                setTimeout(() => {
+                    card.remove();
+                    state.activeCard = null;
+                }, 400);
+            }
+        }
+
+        // Show AI prompt
+        function showAIPrompt() {
+            if (state.activeCard) return;
+            
+            const prompts = [
+                "How are you feeling right now?",
+                "What's occupying your mind at this moment?",
+                "Is there something you need to get off your chest?",
+                "What are you grateful for today?",
+                "What would make today meaningful for you?"
+            ];
+            
+            const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+            
+            // Create card
+            layer0.insertAdjacentHTML('beforeend', cardTemplates.aiPrompt);
+            document.getElementById('ai-question').textContent = randomPrompt;
+            
+            const card = document.getElementById('ai-card');
+            state.activeCard = 'ai-card';
+            
+            // Animate in
+            setTimeout(() => {
+                card.classList.add('visible');
+            }, 10);
+        }
+
+        // Save thought to localStorage
+        function saveThought() {
+            const thought = document.querySelector('#thought-card .thought-input').value;
+            if (thought.trim()) {
+                const thoughts = JSON.parse(localStorage.getItem('thoughts') || '[]');
+                thoughts.push({
+                    text: thought,
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('thoughts', JSON.stringify(thoughts));
+                alert('Thought saved to your vault!');
+            }
+            hideCard('thought-card');
+        }
+
+        // Save AI response
+        function saveAIResponse() {
+            const response = document.querySelector('#ai-card .thought-input').value;
+            if (response.trim()) {
+                const responses = JSON.parse(localStorage.getItem('aiResponses') || '[]');
+                responses.push({
+                    response: response,
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('aiResponses', JSON.stringify(responses));
+            }
+            hideCard('ai-card');
+        }
+
+        // Start rest timer
+        function startRestTimer() {
+            hideCard('rest-card');
+            alert("Rest timer started. Take a 5-minute break to stretch and breathe.");
+            // In a full implementation, we would start a timer here
+        }
+
+        // Start breathing exercise
+        function startBreathingExercise() {
+            alert("Breathing exercise started. Follow the visual guidance for 2 minutes.");
+            // In a full implementation, we would start a breathing animation
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered: ', registration);
+                    }).catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
