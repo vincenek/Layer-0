@@ -3,1262 +3,638 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layer 0: Drift Alpha - Subconscious OS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Layer 0 - Decision Mapping</title>
     <style>
+        :root {
+            --primary: #8a2be2;
+            --secondary: #6a0dad;
+            --accent: #bb86fc;
+            --dark: #121212;
+            --darker: #0a0a0a;
+            --light: #f5f5f5;
+            --gray: #333;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        :root {
-            --deep-indigo: #101024;
-            --neural-grey: #1a1a2e;
-            --soft-violet: #6c63ff;
-            --glow-violet: rgba(108, 99, 255, 0.2);
-            --breath-blue: #4fc3f7;
-            --card-width: min(90vw, 380px);
-            --transition-speed: 0.4s;
-        }
-
+        
         body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at center, var(--deep-indigo) 0%, #000000 100%);
-            color: rgba(255, 255, 255, 0.85);
+            background: linear-gradient(135deg, var(--darker), var(--gray));
+            color: var(--light);
             min-height: 100vh;
-            overflow: hidden;
-            position: relative;
-            touch-action: manipulation;
-        }
-
-        #layer0 {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            perspective: 1000px;
-            z-index: 1;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
         }
-
-        .ambient-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(108, 99, 255, 0.05) 0%, transparent 70%);
-            opacity: 0.7;
-            z-index: -1;
-            animation: ambientPulse 15s infinite alternate;
-        }
-
-        .card {
-            position: absolute;
-            width: var(--card-width);
-            background: rgba(26, 26, 46, 0.9);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
-                        0 0 0 1px rgba(108, 99, 255, 0.3),
-                        0 0 30px 5px var(--glow-violet);
-            transform: translateY(20px) scale(0.95);
-            opacity: 0;
-            transition: all var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 10;
-            overflow: hidden;
-            border: 1px solid rgba(108, 99, 255, 0.1);
-            animation: cardFloat 6s infinite alternate ease-in-out;
-        }
-
-        .card.visible {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-        }
-
-        .card::before {
+        
+        body::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--soft-violet), var(--breath-blue));
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(138, 43, 226, 0.1), transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(187, 134, 252, 0.1), transparent 40%);
+            z-index: -1;
+            animation: glow 10s infinite alternate;
         }
-
-        .card h2 {
-            font-size: 1.4rem;
-            margin-bottom: 15px;
-            color: #ffffff;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        
+        @keyframes glow {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
         }
-
-        .card p {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            color: rgba(255, 255, 255, 0.75);
-        }
-
-        .card-content {
-            padding: 10px 0;
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            flex: 1;
-            min-width: 120px;
-            padding: 14px 20px;
-            border-radius: 12px;
-            border: none;
-            background: rgba(108, 99, 255, 0.15);
-            color: white;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            outline: none;
-            font-size: 0.9rem;
-            min-height: 48px;
-        }
-
-        .btn:hover {
-            background: rgba(108, 99, 255, 0.25);
-            transform: translateY(-2px);
-        }
-
-        .btn.primary {
-            background: linear-gradient(45deg, var(--soft-violet), #7986ff);
-            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .thought-input {
+        
+        .container {
             width: 100%;
-            min-height: 120px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(108, 99, 255, 0.2);
-            border-radius: 12px;
-            padding: 15px;
-            color: white;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            resize: none;
-            margin-bottom: 15px;
-            outline: none;
-            transition: border 0.3s ease;
-        }
-
-        .thought-input:focus {
-            border: 1px solid var(--soft-violet);
-            box-shadow: 0 0 15px rgba(108, 99, 255, 0.2);
-        }
-
-        .bubble-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 25px 0;
-            flex-wrap: wrap;
-        }
-
-        .bubble {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, var(--neural-grey), var(--deep-indigo));
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3),
-                        0 0 0 1px rgba(108, 99, 255, 0.2),
-                        inset 0 0 10px rgba(108, 99, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .bubble:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4),
-                        0 0 0 1px rgba(108, 99, 255, 0.4);
-        }
-
-        .bubble:active {
-            transform: scale(0.95);
-            background: rgba(108, 99, 255, 0.1);
-        }
-
-        .bubble i {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
-            color: var(--soft-violet);
-        }
-
-        .bubble span {
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .breathing-circle {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            margin: 30px auto;
-            background: radial-gradient(circle, rgba(26, 26, 46, 0.8) 0%, rgba(16, 16, 36, 0.9) 70%);
-            border: 2px solid rgba(108, 99, 255, 0.3);
-            box-shadow: 0 0 30px rgba(108, 99, 255, 0.2),
-                        inset 0 0 20px rgba(108, 99, 255, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            max-width: 800px;
+            background: rgba(25, 25, 35, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            animation: fadeIn 0.5s ease-out;
             position: relative;
             overflow: hidden;
         }
-
-        .breath-animation {
+        
+        .container::after {
+            content: '';
             position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(79, 195, 247, 0.15) 0%, transparent 70%);
-            animation: breathPulse 8s infinite ease-in-out;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, rgba(187, 134, 252, 0.1), transparent 30%);
+            animation: rotate 10s linear infinite;
+            z-index: -1;
         }
-
-        .breath-text {
-            font-size: 1.5rem;
-            font-weight: 500;
-            z-index: 2;
-            color: var(--breath-blue);
+        
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
         }
-
-        .status-bar {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            display: flex;
-            gap: 15px;
-            z-index: 5;
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--soft-violet);
-            box-shadow: 0 0 10px var(--soft-violet);
-            animation: pulse 2s infinite;
-        }
-
-        .status-indicator.idle {
-            background: #ff9800;
-            box-shadow: 0 0 10px #ff9800;
-        }
-
-        .status-indicator.anxious {
-            background: #f44336;
-            box-shadow: 0 0 10px #f44336;
-            animation: anxiousPulse 1.5s infinite;
-        }
-
-        .status-text {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.7);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 500;
-        }
-
-        .time-display {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            z-index: 5;
-            text-align: right;
-        }
-
-        .welcome-message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        
+        h1 {
             text-align: center;
-            max-width: 500px;
-            padding: 30px;
-            z-index: 0;
-            opacity: 0.6;
-            width: 90%;
-        }
-
-        .welcome-message h1 {
-            font-size: clamp(1.8rem, 6vw, 2.5rem);
-            font-weight: 700;
+            font-size: 3rem;
             margin-bottom: 20px;
-            background: linear-gradient(45deg, #ffffff, var(--breath-blue));
+            background: linear-gradient(to right, var(--accent), var(--primary));
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(187, 134, 252, 0.3);
         }
-
-        .welcome-message p {
-            font-size: clamp(0.9rem, 3.5vw, 1.1rem);
-            line-height: 1.7;
-            color: rgba(255, 255, 255, 0.6);
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 25px 0 15px;
+            color: var(--accent);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 8px;
         }
-
-        .gesture-hint {
-            position: fixed;
-            bottom: 30px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.5);
-            z-index: 2;
-            animation: fadeHint 8s infinite;
-        }
-
-        .mobile-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-            background: rgba(16, 16, 36, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 15px 10px;
-            z-index: 20;
-            border-top: 1px solid rgba(108, 99, 255, 0.1);
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.75rem;
-            gap: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item i {
-            font-size: 1.4rem;
-            color: var(--soft-violet);
-        }
-
-        .nav-item.active {
+        
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            transform: translateY(-5px);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto;
+            width: fit-content;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+            position: relative;
+            overflow: hidden;
         }
-
-        .nav-item.active i {
-            color: var(--breath-blue);
-            text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -100%;
+            width: 50%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(25deg);
+            transition: all 0.5s;
         }
-
-        .neuro-grid {
+        
+        .btn:hover::after {
+            left: 120%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(138, 43, 226, 0.6);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--accent);
+            box-shadow: none;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 2px solid var(--gray);
+            background: rgba(40, 40, 50, 0.7);
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.3);
+        }
+        
+        .chain-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .chain-box {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(40, 40, 50, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chain-box::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 5px;
             height: 100%;
-            background-image: 
-                radial-gradient(circle at center, transparent 0%, rgba(16, 16, 36, 0.9) 100%),
-                linear-gradient(rgba(108, 99, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(108, 99, 255, 0.1) 1px, transparent 1px);
-            background-size: 100% 100%, 40px 40px, 40px 40px;
-            background-position: center;
-            z-index: -2;
-            opacity: 0.3;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
         }
-
-        .notification {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(26, 26, 46, 0.95);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 30px;
-            border: 1px solid rgba(108, 99, 255, 0.3);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .notification.show {
-            opacity: 1;
-        }
-
-        .timer-display {
-            font-size: 2.5rem;
-            text-align: center;
-            margin: 20px 0;
-            font-weight: 300;
-            color: var(--breath-blue);
-        }
-
-        .timer-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .timer-btn {
-            padding: 10px 20px;
-            border-radius: 30px;
-            border: none;
-            background: rgba(108, 99, 255, 0.15);
-            color: white;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 100px;
-        }
-
-        .timer-btn:hover {
-            background: rgba(108, 99, 255, 0.25);
-        }
-
-        .timer-btn.primary {
-            background: linear-gradient(45deg, var(--soft-violet), #7986ff);
-        }
-
-        .timer-btn:active {
-            transform: scale(0.95);
-        }
-
-        .meditation-container {
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .meditation-text {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            color: var(--breath-blue);
-            min-height: 60px;
-        }
-
-        .meditation-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .sound-options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .sound-option {
+        
+        .chain-item {
             padding: 15px;
-            border-radius: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(108, 99, 255, 0.2);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .sound-option:hover {
-            border-color: var(--soft-violet);
-            transform: translateY(-3px);
-        }
-
-        .sound-option:active {
-            transform: scale(0.95);
-            background: rgba(108, 99, 255, 0.1);
-        }
-
-        .sound-option i {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            display: block;
-            color: var(--soft-violet);
-        }
-
-        .journal-prompt {
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 15px;
-            padding: 15px;
-            margin: 20px 0;
-            font-style: italic;
-            border-left: 3px solid var(--soft-violet);
-        }
-
-        .journal-textarea {
-            width: 100%;
-            min-height: 150px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(108, 99, 255, 0.2);
-            border-radius: 12px;
-            padding: 15px;
-            color: white;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            resize: none;
-            margin-bottom: 15px;
-            outline: none;
-            transition: border 0.3s ease;
-        }
-
-        .journal-textarea:focus {
-            border: 1px solid var(--soft-violet);
-            box-shadow: 0 0 15px rgba(108, 99, 255, 0.2);
-        }
-
-        .intention-input {
-            width: 100%;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(108, 99, 255, 0.2);
-            border-radius: 12px;
-            color: white;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
             margin: 15px 0;
-            outline: none;
+            border-radius: 10px;
+            background: rgba(50, 50, 65, 0.7);
+            border-left: 3px solid var(--accent);
+            animation: slideIn 0.4s ease-out;
+            position: relative;
         }
-
-        .intention-input:focus {
-            border: 1px solid var(--soft-violet);
-            box-shadow: 0 0 15px rgba(108, 99, 255, 0.2);
+        
+        .chain-item:nth-child(odd) {
+            border-left-color: var(--primary);
         }
-
-        /* Animations */
-        @keyframes ambientPulse {
-            0% { opacity: 0.4; transform: scale(1); }
-            100% { opacity: 0.8; transform: scale(1.05); }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
-
-        @keyframes cardFloat {
-            0% { transform: translateY(0) rotate(0.5deg); }
-            100% { transform: translateY(-10px) rotate(-0.5deg); }
+        
+        .cognito-item {
+            background: rgba(30, 70, 50, 0.5);
+            border-left: 3px solid #4CAF50;
+            position: relative;
         }
-
-        @keyframes pulse {
-            0% { opacity: 0.6; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.1); }
-            100% { opacity: 0.6; transform: scale(1); }
+        
+        .cognito-item::after {
+            content: '✓';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4CAF50;
+            font-weight: bold;
         }
-
-        @keyframes anxiousPulse {
-            0% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-            100% { opacity: 0.3; transform: scale(1); }
+        
+        .history-item {
+            background: rgba(50, 50, 65, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 3px solid var(--accent);
+            cursor: pointer;
+            transition: all 0.3s;
         }
-
-        @keyframes breathPulse {
-            0% { transform: scale(0.8); opacity: 0.2; }
-            50% { transform: scale(1.2); opacity: 0.5; }
-            100% { transform: scale(0.8); opacity: 0.2; }
+        
+        .history-item:hover {
+            transform: translateX(5px);
+            background: rgba(60, 60, 75, 0.8);
         }
-
-        @keyframes fadeHint {
-            0% { opacity: 0; }
-            30% { opacity: 1; }
-            70% { opacity: 1; }
-            100% { opacity: 0; }
+        
+        .step {
+            display: none;
         }
-
-        @keyframes breatheInOut {
-            0% { transform: scale(0.8); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(0.8); }
+        
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s;
         }
-
-        @keyframes buttonPop {
-            0% { transform: scale(1); }
-            50% { transform: scale(0.95); }
-            100% { transform: scale(1); }
+        
+        .session-name {
+            font-style: italic;
+            color: var(--accent);
+            margin-bottom: 10px;
         }
-
-        .button-pop {
-            animation: buttonPop 0.3s ease;
+        
+        .timestamp {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 5px;
+            text-align: right;
         }
-
-        /* Mobile-specific adjustments */
+        
+        .flex-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
         @media (max-width: 768px) {
-            .card {
+            .container {
                 padding: 20px;
-                border-radius: 18px;
             }
             
-            .card h2 {
-                font-size: 1.3rem;
+            h1 {
+                font-size: 2.2rem;
             }
             
-            .card p {
-                font-size: 0.9rem;
-            }
-            
-            .btn {
-                min-width: 100%;
-                padding: 12px;
-                margin-bottom: 8px;
-            }
-            
-            .bubble {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .bubble i {
+            h2 {
                 font-size: 1.5rem;
             }
             
-            .breathing-circle {
-                width: 150px;
-                height: 150px;
+            .chain-container {
+                flex-direction: column;
             }
             
-            .status-bar, .time-display {
-                top: 15px;
+            .btn {
+                width: 100%;
             }
             
-            .time-display {
-                font-size: 0.8rem;
-            }
-            
-            .mobile-nav {
-                padding: 12px 5px;
-            }
-            
-            .nav-item {
-                font-size: 0.7rem;
-            }
-            
-            .nav-item i {
-                font-size: 1.2rem;
-            }
-            
-            .sound-options {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-height: 600px) {
-            .welcome-message {
-                top: 45%;
-            }
-            
-            .gesture-hint {
-                bottom: 20px;
+            .flex-buttons {
+                flex-direction: column;
+                align-items: center;
             }
         }
     </style>
 </head>
 <body>
-    <div id="layer0">
-        <div class="ambient-bg"></div>
-        <div class="neuro-grid"></div>
-        
-        <!-- Welcome Message -->
-        <div class="welcome-message">
-            <h1>Layer 0: Drift Alpha</h1>
-            <p>The subconscious operating system that responds to your presence, behavior, and rhythm</p>
+    <div class="container">
+        <!-- Step 0: Welcome Screen -->
+        <div id="step0" class="step active">
+            <h1>Layer 0</h1>
+            <p style="text-align: center; font-size: 1.2rem; margin-bottom: 30px; line-height: 1.6;">
+                Map your decisions, understand your thinking, and discover optimized cognitive paths.
+            </p>
+            <button id="beginBtn" class="btn">Begin Mapping</button>
         </div>
-        
-        <!-- Status Indicators -->
-        <div class="status-bar">
-            <div class="status-indicator" id="activity-indicator"></div>
-            <div class="status-text" id="status-text">Ambient</div>
+
+        <!-- Step 1: Decision Input -->
+        <div id="step1" class="step">
+            <h2>Your Decision</h2>
+            <div class="input-group">
+                <label for="decisionInput">What decision did you make?</label>
+                <textarea id="decisionInput" rows="3" placeholder="Example: I skipped studying last night"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="sessionName">Session Name (Optional)</label>
+                <input type="text" id="sessionName" placeholder="Give this session a name">
+            </div>
+            <button id="toWhyBtn" class="btn">Continue to Reflection</button>
         </div>
-        
-        <div class="time-display" id="time-display"></div>
-        
-        <div class="gesture-hint" id="gesture-hint">Touch and hold to access subconscious menu</div>
-        
-        <!-- Cards will be dynamically injected here -->
+
+        <!-- Step 2: Why Chain -->
+        <div id="step2" class="step">
+            <h2>Reflection Journey</h2>
+            <div id="whyContainer">
+                <!-- Why questions will be injected here -->
+            </div>
+        </div>
+
+        <!-- Step 3: Results -->
+        <div id="step3" class="step">
+            <h2>Decision Analysis</h2>
+            <div class="chain-container">
+                <div class="chain-box">
+                    <h3>Your Thought Process</h3>
+                    <div id="userChain">
+                        <!-- User's chain will be injected here -->
+                    </div>
+                </div>
+                
+                <div class="chain-box">
+                    <h3>Cognito Optimized Path</h3>
+                    <div id="cognitoPath">
+                        <!-- Cognito path will be injected here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex-buttons">
+                <button id="saveSessionBtn" class="btn">Save This Session</button>
+                <button id="historyBtn" class="btn btn-secondary">View History</button>
+                <button id="newSessionBtn" class="btn btn-secondary">Start New Session</button>
+            </div>
+        </div>
+
+        <!-- Step 4: History -->
+        <div id="step4" class="step">
+            <h2>Session History</h2>
+            <div id="historyList">
+                <!-- History items will be injected here -->
+            </div>
+            <div class="flex-buttons">
+                <button id="clearDataBtn" class="btn btn-secondary">Clear All Data</button>
+                <button id="backToStartBtn" class="btn">Back to Start</button>
+            </div>
+        </div>
     </div>
 
-    <div class="notification" id="notification"></div>
-
-    <nav class="mobile-nav">
-        <div class="nav-item active" id="nav-home">
-            <i>🌌</i>
-            <span>Home</span>
-        </div>
-        <div class="nav-item" id="nav-thoughts">
-            <i>💭</i>
-            <span>Thoughts</span>
-        </div>
-        <div class="nav-item" id="nav-mood">
-            <i>😌</i>
-            <span>Mood</span>
-        </div>
-        <div class="nav-item" id="nav-settings">
-            <i>⚙️</i>
-            <span>Settings</span>
-        </div>
-    </nav>
-
     <script>
-        // Enhanced Card templates with visual feedback
-        const cardTemplates = {
-            restMode: `
-                <div class="card" id="rest-card">
-                    <h2>🛌 Rest Mode</h2>
-                    <p>You've been inactive for a while. Take a mindful break to recharge your mind.</p>
-                    <div class="timer-display" id="timer-display">05:00</div>
-                    <div class="timer-controls">
-                        <button class="timer-btn" onclick="pauseResumeTimer(this)">Start</button>
-                        <button class="timer-btn primary" onclick="hideCard('rest-card', 'Dismissed rest mode')">Dismiss</button>
-                    </div>
-                </div>
-            `,
-            
-            thoughtVault: `
-                <div class="card" id="thought-card">
-                    <h2>💭 Thought Vault</h2>
-                    <p>You seemed to be in a flow. Capture your thoughts before they drift away...</p>
-                    <textarea class="thought-input" placeholder="Type your thoughts here..." id="thought-input"></textarea>
-                    <div class="card-actions">
-                        <button class="btn" onclick="hideCard('thought-card', 'Thought cancelled')">Cancel</button>
-                        <button class="btn primary" onclick="saveThought(this)">Save Thought</button>
-                    </div>
-                </div>
-            `,
-            
-            focusBubble: `
-                <div class="card" id="focus-card">
-                    <h2>🌀 Focus Bubble</h2>
-                    <p>Your scrolling suggests you might be searching for focus. Try one of these:</p>
-                    <div class="bubble-container">
-                        <div class="bubble" onclick="showCard('meditation', this)">
-                            <i>🧘</i>
-                            <span>Meditate</span>
-                        </div>
-                        <div class="bubble" onclick="showCard('journal', this)">
-                            <i>📓</i>
-                            <span>Journal</span>
-                        </div>
-                        <div class="bubble" onclick="showCard('ambientSounds', this)">
-                            <i>🎧</i>
-                            <span>Sounds</span>
-                        </div>
-                    </div>
-                </div>
-            `,
-            
-            anxietyMode: `
-                <div class="card" id="anxiety-card">
-                    <h2>🌬️ Calm Breath</h2>
-                    <p>Your movements suggest restlessness. Follow your breath for a moment...</p>
-                    <div class="breathing-circle" id="breathing-circle">
-                        <div class="breath-animation" id="breath-animation"></div>
-                        <div class="breath-text" id="breath-text">Breathe</div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn" onclick="hideCard('anxiety-card', 'Calming mode closed')">I'm calm</button>
-                        <button class="btn primary" onclick="startBreathingExercise(this)">Guide Me</button>
-                    </div>
-                </div>
-            `,
-            
-            morningMode: `
-                <div class="card" id="morning-card">
-                    <h2>🌅 Mind Setup</h2>
-                    <p>Good morning! How would you like to set the tone for your day?</p>
-                    <div class="bubble-container">
-                        <div class="bubble" onclick="showCard('intention', this)">
-                            <i>🎯</i>
-                            <span>Intention</span>
-                        </div>
-                        <div class="bubble" onclick="showCard('gratitude', this)">
-                            <i>🙏</i>
-                            <span>Gratitude</span>
-                        </div>
-                        <div class="bubble" onclick="showCard('plan', this)">
-                            <i>📋</i>
-                            <span>Plan</span>
-                        </div>
-                    </div>
-                </div>
-            `,
-            
-            nightMode: `
-                <div class="card" id="night-card">
-                    <h2>🌙 Close Loop</h2>
-                    <p>As the day winds down, take a moment to reflect and release...</p>
-                    <div class="bubble-container">
-                        <div class="bubble" onclick="showCard('reflection', this)">
-                            <i>🔄</i>
-                            <span>Reflect</span>
-                        </div>
-                        <div class="bubble" onclick="showCard('gratitude', this)">
-                            <i>💖</i>
-                            <span>Gratitude</span>
-                        </div>
-                        <div class="bubble" onclick="showCard('windDown', this)">
-                            <i>⏳</i>
-                            <span>Wind Down</span>
-                        </div>
-                    </div>
-                </div>
-            `,
-            
-            aiPrompt: `
-                <div class="card" id="ai-card">
-                    <h2>🧠 Mind Check</h2>
-                    <p id="ai-question">How are you feeling in this moment?</p>
-                    <textarea class="thought-input" placeholder="Share your thoughts..." id="ai-response"></textarea>
-                    <div class="card-actions">
-                        <button class="btn" onclick="hideCard('ai-card', 'Reflection skipped')">Skip</button>
-                        <button class="btn primary" onclick="saveAIResponse(this)">Save</button>
-                    </div>
-                </div>
-            `,
-            
-            moodLog: `
-                <div class="card" id="mood-card">
-                    <h2>😌 Mood Log</h2>
-                    <p>How are you feeling right now? Select your current state:</p>
-                    <div class="bubble-container">
-                        <div class="bubble" onclick="logMood('calm', this)">
-                            <i>😌</i>
-                            <span>Calm</span>
-                        </div>
-                        <div class="bubble" onclick="logMood('focused', this)">
-                            <i>🧠</i>
-                            <span>Focused</span>
-                        </div>
-                        <div class="bubble" onclick="logMood('energetic', this)">
-                            <i>⚡</i>
-                            <span>Energetic</span>
-                        </div>
-                        <div class="bubble" onclick="logMood('tired', this)">
-                            <i>😴</i>
-                            <span>Tired</span>
-                        </div>
-                    </div>
-                </div>
-            `,
-            
-            meditation: `
-                <div class="card" id="meditation-card">
-                    <h2>🧘 Mindful Moment</h2>
-                    <p>Take a few minutes to center yourself with this guided meditation:</p>
-                    <div class="meditation-container">
-                        <div class="meditation-text" id="meditation-text">Find a comfortable position and close your eyes...</div>
-                        <div class="meditation-controls">
-                            <button class="btn" onclick="hideCard('meditation-card', 'Meditation closed')">Exit</button>
-                            <button class="btn primary" onclick="nextMeditationStep(this)">Begin</button>
-                        </div>
-                    </div>
-                </div>
-            `,
-            
-            journal: `
-                <div class="card" id="journal-card">
-                    <h2>📓 Journal Prompt</h2>
-                    <p>Reflect on this thought:</p>
-                    <div class="journal-prompt" id="journal-prompt">What are three things you're grateful for today?</div>
-                    <textarea class="journal-textarea" placeholder="Write your thoughts here..." id="journal-entry"></textarea>
-                    <div class="card-actions">
-                        <button class="btn" onclick="hideCard('journal-card', 'Journal closed')">Cancel</button>
-                        <button class="btn primary" onclick="saveJournalEntry(this)">Save Entry</button>
-                    </div>
-                </div>
-            `,
-            
-            ambientSounds: `
-                <div class="card" id="sounds-card">
-                    <h2>🎧 Ambient Soundscape</h2>
-                    <p>Select a sound to help you focus or relax:</p>
-                    <div class="sound-options">
-                        <div class="sound-option" onclick="playSound('rain', this)">
-                            <i>🌧️</i>
-                            <span>Rain</span>
-                        </div>
-                        <div class="sound-option" onclick="playSound('forest', this)">
-                            <i>🌲</i>
-                            <span>Forest</span>
-                        </div>
-                        <div class="sound-option" onclick="playSound('waves', this)">
-                            <i>🌊</i>
-                            <span>Waves</span>
-                        </div>
-                        <div class="sound-option" onclick="playSound('coffee', this)">
-                            <i>☕</i>
-                            <span>Coffee Shop</span>
-                        </div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn" onclick="stopAllSounds(this)">Stop Sounds</button>
-                        <button class="btn" onclick="hideCard('sounds-card', 'Sounds closed')">Close</button>
-                    </div>
-                </div>
-            `,
-            
-            intention: `
-                <div class="card" id="intention-card">
-                    <h2>🎯 Set Your Intention</h2>
-                    <p>What would you like to focus on today? Set your intention:</p>
-                    <input type="text" class="intention-input" id="intention-input" placeholder="Today I will focus on...">
-                    <div class="card-actions">
-                        <button class="btn" onclick="hideCard('intention-card', 'Intention cancelled')">Cancel</button>
-                        <button class="btn primary" onclick="saveIntention(this)">Set Intention</button>
-                    </div>
-                </div>
-            `
-        };
-
         // State management
-        let state = {
-            activeCard: null,
-            idleTimer: null,
-            lastActivity: Date.now(),
-            userStatus: 'ambient',
-            timerInterval: null,
-            timerRunning: false,
-            timerSeconds: 300,
-            meditationStep: 0
+        const state = {
+            currentStep: 0,
+            decision: '',
+            sessionName: '',
+            whyChain: [],
+            cognitoPath: [],
+            sessions: JSON.parse(localStorage.getItem('layer0_sessions')) || []
         };
 
         // DOM Elements
-        const layer0 = document.getElementById('layer0');
-        const activityIndicator = document.getElementById('activity-indicator');
-        const statusText = document.getElementById('status-text');
-        const timeDisplay = document.getElementById('time-display');
-        const gestureHint = document.getElementById('gesture-hint');
-        const notification = document.getElementById('notification');
+        const steps = document.querySelectorAll('.step');
+        const beginBtn = document.getElementById('beginBtn');
+        const toWhyBtn = document.getElementById('toWhyBtn');
+        const whyContainer = document.getElementById('whyContainer');
+        const userChain = document.getElementById('userChain');
+        const cognitoPath = document.getElementById('cognitoPath');
+        const saveSessionBtn = document.getElementById('saveSessionBtn');
+        const historyBtn = document.getElementById('historyBtn');
+        const newSessionBtn = document.getElementById('newSessionBtn');
+        const historyList = document.getElementById('historyList');
+        const clearDataBtn = document.getElementById('clearDataBtn');
+        const backToStartBtn = document.getElementById('backToStartBtn');
+        const decisionInput = document.getElementById('decisionInput');
+        const sessionNameInput = document.getElementById('sessionName');
 
         // Initialize
         function init() {
-            updateTimeDisplay();
-            setInterval(updateTimeDisplay, 60000);
+            showStep(0);
+            setupEventListeners();
+            renderHistory();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            beginBtn.addEventListener('click', () => showStep(1));
+            toWhyBtn.addEventListener('click', startWhyChain);
+            saveSessionBtn.addEventListener('click', saveSession);
+            historyBtn.addEventListener('click', () => showStep(4));
+            newSessionBtn.addEventListener('click', startNewSession);
+            clearDataBtn.addEventListener('click', clearData);
+            backToStartBtn.addEventListener('click', () => showStep(0));
+        }
+
+        // Navigation
+        function showStep(stepIndex) {
+            state.currentStep = stepIndex;
+            steps.forEach((step, index) => {
+                step.classList.toggle('active', index === stepIndex);
+            });
             
-            // Set time-based card
-            const hour = new Date().getHours();
-            if (hour >= 5 && hour < 12) {
-                showCard('morningMode');
-            } else if (hour >= 21 || hour < 5) {
-                showCard('nightMode');
+            // Special handling for step 4
+            if (stepIndex === 4) {
+                renderHistory();
+            }
+        }
+
+        // Start the why chain process
+        function startWhyChain() {
+            state.decision = decisionInput.value.trim();
+            state.sessionName = sessionNameInput.value.trim();
+            state.whyChain = [];
+            
+            if (!state.decision) {
+                alert('Please describe your decision first');
+                return;
             }
             
-            // Set up event listeners
-            setupEventListeners();
-            
-            // Start idle detection
-            resetIdleTimer();
-            
-            // Initialize mobile nav
-            initMobileNav();
-            
-            // Hide gesture hint after delay
-            setTimeout(() => {
-                gestureHint.style.opacity = '0';
-            }, 8000);
+            showStep(2);
+            renderWhyQuestion(1);
         }
 
-        // Show notification
-        function showNotification(message) {
-            notification.textContent = message;
-            notification.classList.add('show');
+        // Render a why question
+        function renderWhyQuestion(level) {
+            whyContainer.innerHTML = '';
             
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'input-group';
+            
+            const label = document.createElement('label');
+            label.textContent = level === 1 
+                ? `Why did you make that decision?` 
+                : `Why ${state.whyChain[level-2]}?`;
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = `Reason #${level}`;
+            input.id = `whyInput${level}`;
+            
+            const button = document.createElement('button');
+            button.className = 'btn';
+            button.textContent = level < 3 ? 'Next Why' : 'Generate Cognito Path';
+            
+            button.addEventListener('click', () => {
+                const answer = input.value.trim();
+                if (!answer) {
+                    alert('Please provide a reason');
+                    return;
+                }
+                
+                state.whyChain.push(answer);
+                
+                if (level < 3) {
+                    renderWhyQuestion(level + 1);
+                } else {
+                    generateCognitoPath();
+                    showStep(3);
+                }
+            });
+            
+            questionDiv.appendChild(label);
+            questionDiv.appendChild(input);
+            questionDiv.appendChild(button);
+            
+            whyContainer.appendChild(questionDiv);
+            input.focus();
         }
 
-        // Initialize mobile navigation
-        function initMobileNav() {
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    document.querySelectorAll('.nav-item').forEach(nav => {
-                        nav.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    
-                    const id = this.id;
-                    if (id === 'nav-thoughts') {
-                        showCard('thoughtVault');
-                    } else if (id === 'nav-mood') {
-                        showCard('moodLog');
-                    }
-                });
+        // Generate optimized cognito path
+        function generateCognitoPath() {
+            state.cognitoPath = [];
+            
+            // Create optimized suggestions based on user's input
+            state.whyChain.forEach((reason, index) => {
+                const level = index + 1;
+                let suggestion;
+                
+                if (level === 1) {
+                    suggestion = `Instead of "${reason}", consider setting clear priorities and boundaries`;
+                } else if (level === 2) {
+                    suggestion = `Address the root cause "${reason}" through proactive planning`;
+                } else {
+                    suggestion = `Transform "${reason}" into an opportunity for growth and learning`;
+                }
+                
+                state.cognitoPath.push(suggestion);
+            });
+            
+            renderResults();
+        }
+
+        // Render results on step 3
+        function renderResults() {
+            userChain.innerHTML = '';
+            cognitoPath.innerHTML = '';
+            
+            // Add decision as the first item
+            const decisionItem = document.createElement('div');
+            decisionItem.className = 'chain-item';
+            decisionItem.textContent = state.decision;
+            userChain.appendChild(decisionItem);
+            
+            // Add why chain items
+            state.whyChain.forEach((reason, index) => {
+                const item = document.createElement('div');
+                item.className = 'chain-item';
+                item.innerHTML = `<strong>Why ${index + 1}:</strong> ${reason}`;
+                userChain.appendChild(item);
+                
+                const cognitoItem = document.createElement('div');
+                cognitoItem.className = 'chain-item cognito-item';
+                cognitoItem.innerHTML = `<strong>Optimized Step ${index + 1}:</strong> ${state.cognitoPath[index]}`;
+                cognitoPath.appendChild(cognitoItem);
             });
         }
 
-        // Update time display
-        function updateTimeDisplay() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const dateString = now.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
-            timeDisplay.textContent = `${dateString}\n${timeString}`;
-        }
-
-        // Set up event listeners
-        function setupEventListeners() {
-            // Activity tracking
-            document.addEventListener('mousemove', resetIdleTimer);
-            document.addEventListener('keydown', resetIdleTimer);
-            document.addEventListener('scroll', resetIdleTimer);
-            document.addEventListener('touchstart', resetIdleTimer);
-        }
-
-        // Idle detection
-        function resetIdleTimer() {
-            clearTimeout(state.idleTimer);
-            state.idleTimer = setTimeout(() => {
-                if (!state.activeCard) {
-                    showCard('restMode');
-                }
-                setUserStatus('idle');
-            }, 30000);
-            
-            setUserStatus('ambient');
-            state.lastActivity = Date.now();
-        }
-
-        // Set user status
-        function setUserStatus(status) {
-            state.userStatus = status;
-            activityIndicator.className = 'status-indicator ' + status;
-            statusText.textContent = status.charAt(0).toUpperCase() + status.slice(1);
-        }
-
-        // Card management with visual feedback
-        function showCard(cardType, element = null) {
-            // Add button animation if clicked
-            if (element) {
-                element.classList.add('button-pop');
-                setTimeout(() => element.classList.remove('button-pop'), 300);
-            }
-            
-            // Hide any existing card
-            if (state.activeCard) {
-                hideCard(state.activeCard);
-            }
-            
-            // Create new card
-            const cardHTML = cardTemplates[cardType];
-            layer0.insertAdjacentHTML('beforeend', cardHTML);
-            
-            // Get reference to the new card
-            const cardId = cardType.replace('Mode', '').toLowerCase() + '-card';
-            const card = document.getElementById(cardId);
-            state.activeCard = cardId;
-            
-            // Animate in
-            setTimeout(() => {
-                card.classList.add('visible');
-            }, 10);
-            
-            // Special setup for certain cards
-            if (cardType === 'restMode') {
-                state.timerSeconds = 300;
-                updateTimerDisplay();
-            }
-        }
-
-        function hideCard(cardId, message = '') {
-            const card = document.getElementById(cardId);
-            if (card) {
-                card.classList.remove('visible');
-                setTimeout(() => {
-                    card.remove();
-                    state.activeCard = null;
-                    
-                    // Clean up any ongoing processes
-                    if (cardId === 'rest-card') {
-                        clearInterval(state.timerInterval);
-                        state.timerRunning = false;
-                    }
-                    
-                    // Show notification
-                    if (message) {
-                        showNotification(message);
-                    }
-                }, 400);
-            }
-        }
-
-        // Timer functions with visual feedback
-        function updateTimerDisplay() {
-            if (!document.getElementById('timer-display')) return;
-            
-            const minutes = Math.floor(state.timerSeconds / 60);
-            const seconds = state.timerSeconds % 60;
-            document.getElementById('timer-display').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-
-        function pauseResumeTimer(button) {
-            button.classList.add('button-pop');
-            setTimeout(() => button.classList.remove('button-pop'), 300);
-            
-            if (!state.timerRunning) {
-                startTimer();
-                button.textContent = 'Pause';
-                showNotification('Rest timer started');
-            } else {
-                clearInterval(state.timerInterval);
-                state.timerRunning = false;
-                button.textContent = 'Resume';
-                showNotification('Timer paused');
-            }
-        }
-
-        function startTimer() {
-            state.timerRunning = true;
-            
-            state.timerInterval = setInterval(() => {
-                state.timerSeconds--;
-                updateTimerDisplay();
-                
-                if (state.timerSeconds <= 0) {
-                    clearInterval(state.timerInterval);
-                    showNotification("Break completed! Time to return to your activities");
-                    document.querySelector('#timer-control').textContent = 'Restart';
-                    state.timerRunning = false;
-                }
-            }, 1000);
-        }
-
-        // Save thought with visual feedback
-        function saveThought(button) {
-            button.classList.add('button-pop');
-            setTimeout(() => button.classList.remove('button-pop'), 300);
-            
-            const thought = document.getElementById('thought-input')?.value;
-            if (thought && thought.trim()) {
-                showNotification('Thought saved successfully!');
-                setTimeout(() => hideCard('thought-card'), 1000);
-            } else {
-                showNotification('Please enter your thoughts');
-            }
-        }
-
-        // Mood logging with visual feedback
-        function logMood(mood, element) {
-            element.classList.add('button-pop');
-            setTimeout(() => element.classList.remove('button-pop'), 300);
-            
-            const moodEmoji = {
-                'calm': '😌',
-                'focused': '🧠',
-                'energetic': '⚡',
-                'tired': '😴'
-            }[mood];
-            
-            showNotification(`Mood logged: ${moodEmoji}`);
-            setTimeout(() => hideCard('mood-card'), 1000);
-        }
-
-        // Breathing exercise with visual feedback
-        function startBreathingExercise(button) {
-            button.classList.add('button-pop');
-            setTimeout(() => button.classList.remove('button-pop'), 300);
-            
-            const breathText = document.getElementById('breath-text');
-            const breathAnimation = document.getElementById('breath-animation');
-            
-            if (button.textContent === 'Guide Me') {
-                breathText.textContent = "Breathe In";
-                breathAnimation.style.animation = "breatheInOut 4s infinite ease-in-out";
-                button.textContent = "Stop Guidance";
-                showNotification('Follow the breathing guide');
-            } else {
-                breathAnimation.style.animation = "none";
-                button.textContent = "Guide Me";
-                breathText.textContent = "Breathe";
-                showNotification('Breathing exercise stopped');
-            }
-        }
-
-        // Meditation functions with visual feedback
-        function nextMeditationStep(button) {
-            button.classList.add('button-pop');
-            setTimeout(() => button.classList.remove('button-pop'), 300);
-            
-            const steps = [
-                "Find a comfortable position and close your eyes...",
-                "Take a deep breath in... and slowly exhale...",
-                "Notice the sensations in your body...",
-                "Observe your thoughts without judgment...",
-                "Bring your attention to your breath...",
-                "Gently return your awareness to the room..."
-            ];
-            
-            state.meditationStep++;
-            
-            if (state.meditationStep < steps.length) {
-                document.getElementById('meditation-text').textContent = steps[state.meditationStep];
-                button.textContent = "Next";
-            } else {
-                showNotification("Meditation completed. Well done!");
-                hideCard('meditation-card');
-                state.meditationStep = 0;
-            }
-        }
-
-        // Sound functions with visual feedback
-        function playSound(type, element) {
-            element.classList.add('button-pop');
-            setTimeout(() => element.classList.remove('button-pop'), 300);
-            
-            const soundNames = {
-                'rain': 'Gentle Rain',
-                'forest': 'Forest Ambience',
-                'waves': 'Ocean Waves',
-                'coffee': 'Coffee Shop'
+        // Save session to localStorage
+        function saveSession() {
+            const session = {
+                id: Date.now(),
+                name: state.sessionName || `Session ${state.sessions.length + 1}`,
+                decision: state.decision,
+                whyChain: [...state.whyChain],
+                cognitoPath: [...state.cognitoPath],
+                timestamp: new Date().toLocaleString()
             };
             
-            showNotification(`Now playing: ${soundNames[type]}`);
-        }
-
-        function stopAllSounds(button) {
-            button.classList.add('button-pop');
-            setTimeout(() => button.classList.remove('button-pop'), 300);
-            showNotification('Sounds stopped');
-        }
-
-        // Intention setting with visual feedback
-        function saveIntention(button) {
-            button.classList.add('button-pop');
-            setTimeout(() => button.classList.remove('button-pop'), 300);
+            state.sessions.unshift(session);
+            localStorage.setItem('layer0_sessions', JSON.stringify(state.sessions));
             
-            const intention = document.getElementById('intention-input')?.value;
-            if (intention && intention.trim()) {
-                showNotification(`Intention set: ${intention}`);
-                setTimeout(() => hideCard('intention-card'), 1000);
-            } else {
-                showNotification('Please enter your intention');
+            alert('Session saved successfully!');
+        }
+
+        // Render history list
+        function renderHistory() {
+            historyList.innerHTML = '';
+            
+            if (state.sessions.length === 0) {
+                historyList.innerHTML = '<p>No sessions found. Start a new mapping session!</p>';
+                return;
+            }
+            
+            state.sessions.forEach(session => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div class="session-name">${session.name}</div>
+                    <div>${session.decision}</div>
+                    <div class="timestamp">${session.timestamp}</div>
+                `;
+                
+                item.addEventListener('click', () => {
+                    // Load session data
+                    state.decision = session.decision;
+                    state.whyChain = session.whyChain;
+                    state.cognitoPath = session.cognitoPath;
+                    
+                    // Render results
+                    renderResults();
+                    showStep(3);
+                });
+                
+                historyList.appendChild(item);
+            });
+        }
+
+        // Clear all data
+        function clearData() {
+            if (confirm('Are you sure you want to delete all session data? This cannot be undone.')) {
+                localStorage.removeItem('layer0_sessions');
+                state.sessions = [];
+                renderHistory();
             }
         }
 
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', init);
+        // Start a new session
+        function startNewSession() {
+            // Reset state
+            state.decision = '';
+            state.sessionName = '';
+            state.whyChain = [];
+            state.cognitoPath = [];
+            
+            // Reset inputs
+            decisionInput.value = '';
+            sessionNameInput.value = '';
+            
+            showStep(0);
+        }
+
+        // Initialize the app
+        window.onload = init;
     </script>
 </body>
 </html>
