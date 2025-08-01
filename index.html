@@ -1,394 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Layer 0</title>
-  <style>
-    /* Dark theme and basic reset */
-    body {
-      margin: 0;
-      background-color: #121212;
-      color: #eee;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
-    .container {
-      max-width: 600px;
-      width: 100%;
-      padding: 20px;
-    }
-    h1, h2 {
-      color: #fff;
-      margin-bottom: 20px;
-    }
-    p {
-      margin: 10px 0;
-    }
-    button {
-      background-color: #1e90ff;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      margin: 10px 5px 10px 0;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-    button:hover {
-      background-color: #63b3ed;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      background-color: #333;
-      color: #fff;
-      border: 1px solid #555;
-      border-radius: 5px;
-      font-size: 1rem;
-      box-sizing: border-box;
-    }
-    input::placeholder, textarea::placeholder {
-      color: #999;
-    }
-    .hidden {
-      display: none;
-    }
-    .fade-in {
-      animation: fadeIn 0.5s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    ul {
-      text-align: left;
-      margin-left: 20px;
-    }
-    .session-item {
-      background-color: #1a1a1a;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-    }
-    .session-item strong {
-      color: #ddd;
-    }
-    /* Responsive adjustments */
-    @media (max-width: 600px) {
-      h1, h2 {
-        font-size: 1.5rem;
-      }
-      button {
-        width: 100%;
-        margin: 10px 0;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layer 0 Decision Mapper</title>
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<!-- Icons (Base64): -->
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEvElEQVR4nO3Y0ZHbOBAEUPpCUv4xKCXfz6lOVkleUgSIAfq9ALbE">
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABWklEQVR4nO2bTbLDIAyD6TtS7n+GXKlvLVEZYLgOHeWDnSmpZGQpfOVRrKhJsGILcPS/c+BmLgAkGiQR7HbSKkZ1wGhgAuI0OEDGISINgFpYcYUREIGJkZ2yrv0XUTsaQeJbdqKdK+xq2Vi1uQjL9stHW6zvpHwvrFUwPYggvAyFbX/S5raDRhb2JSz42Q49do5IdrsBINyt+MBZoq4Eivd8yF6uLc1voEUhDV7u85XqQn45YWZuAQ61rOwXWPrUe74mH117nud96FMygScDQd9kCtn2nEhjicUpFMxVwVbQghGuYLqgQb0IvtYW0IO6rVG0h5vWCkVWOOaGsaLpZW8XVWQLg4yYQaRMGLx6txVu4+Vy2ID1sr/zH9d6TXU8gVCDOct61Q0+R5o24E6koUdZOgA8JYuQBqLUe3+l6N8+xA2nJqU9GeHa0J7LbSa2sFfblAUqZuh3YnfKhVAm+gkwAW5DyWUQDi+i1/rIQ6v0KJmwMcCldVKV6kVcEQ3QZtwip4CXcSND6n/rFO8/G9SfuVAB79ekbNeY+fMAAAAASUVORK5CYII=">
+<!-- Inline web manifest (data URI) -->
+<link rel="manifest" href='data:application/manifest+json,{"name":"Layer0 Decision Mapper","short_name":"Layer0","description":"A decision mapping PWA","icons":[{"src":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEvElEQVR4nO3Y0ZHbOBAEUPpCUv4xKCXfz6lOVkleUgSIAfq9ALbE","type":"image/png","sizes":"192x192"},{"src":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAPOUlEQVR4nO3cYXYbyQ2FUU6W5P2vwVua","type":"image/png","sizes":"512x512"}],"start_url":".","display":"standalone","theme_color":"#000000","background_color":"#000000"}'>
+<style>
+  body { background: #000; color: #fff; font-family: sans-serif; padding: 1em; }
+  h1 { margin-top: 0; }
+  label { display: block; margin: 0.5em 0; }
+  input { background: #222; color: #fff; border: 1px solid #555; padding: 5px; width: 100%; box-sizing: border-box; }
+  button { background: #333; color: #fff; border: 1px solid #555; padding: 5px 10px; margin: 0.2em 0.2em 0.2em 0; }
+  button:hover { background: #444; }
+  ul { list-style: none; margin-left: 0.5em; padding-left: 1em; border-left: 1px solid #555; }
+  li { margin: 0.2em 0; }
+  #tree { margin-top: 1em; }
+  #path { margin-top: 1em; font-weight: bold; }
+</style>
 </head>
 <body>
-<div class="container">
-  <!-- Welcome Screen -->
-  <div id="welcomeScreen">
-    <h1>Layer 0</h1>
-    <p>Map your decision-making process.</p>
-    <button id="beginBtn">Begin Mapping</button>
-    <button id="viewPastBtn">View Past Sessions</button>
-  </div>
-
-  <!-- Step 1: Decision Input -->
-  <div id="step1" class="hidden">
-    <h2>Step 1: Your Decision</h2>
-    <label for="decisionInput">What recent decision did you make?</label>
-    <textarea id="decisionInput" rows="2" placeholder="Enter your decision here..."></textarea>
-    <button id="next1">Next</button>
-  </div>
-
-  <!-- Step 2: Why 1 -->
-  <div id="step2" class="hidden">
-    <h2>Step 2: Why?</h2>
-    <label for="why1Input">Why did you make this decision?</label>
-    <textarea id="why1Input" rows="2" placeholder="Enter your reason..."></textarea>
-    <button id="next2">Next</button>
-  </div>
-
-  <!-- Step 3: Why 2 -->
-  <div id="step3" class="hidden">
-    <h2>Step 3: Why Again?</h2>
-    <label for="why2Input">Why do you think that reason was your motivation?</label>
-    <textarea id="why2Input" rows="2" placeholder="Enter your next reason..."></textarea>
-    <button id="next3">Next</button>
-  </div>
-
-  <!-- Step 4: Why 3 -->
-  <div id="step4" class="hidden">
-    <h2>Step 4: Why a Third Time?</h2>
-    <label for="why3Input">Why is that reason important to you?</label>
-    <textarea id="why3Input" rows="2" placeholder="Enter your final reason..."></textarea>
-    <button id="finishBtn">Finish</button>
-  </div>
-
-  <!-- Result Screen: Thought Chain and Cognito Path -->
-  <div id="resultScreen" class="hidden">
-    <h2>Thought Chain</h2>
-    <div id="thoughtChain"></div>
-    <h2>Cognito Path</h2>
-    <div id="cognitoPath"></div>
-    <button id="newSessionBtn">Start New Session</button>
-    <button id="viewPastBtn2">View Past Sessions</button>
-  </div>
-
-  <!-- Past Sessions Screen -->
-  <div id="pastScreen" class="hidden">
-    <h2>Past Sessions</h2>
-    <div id="sessionList"></div>
-    <button id="clearHistoryBtn">Clear History</button>
-    <button id="backBtn">Back</button>
-  </div>
+<h1>Layer 0 Decision Mapper</h1>
+<div>
+  <label>Decision: <input id="decision"></label>
+  <button id="decision-btn">Next</button>
 </div>
-
+<div id="why1section" style="display:none;">
+  <label>Why #1: <input id="why1"></label>
+  <button id="why1-btn">Next</button>
+</div>
+<div id="why2section" style="display:none;">
+  <label>Why #2: <input id="why2"></label>
+  <button id="why2-btn">Next</button>
+</div>
+<div id="why3section" style="display:none;">
+  <label>Why #3: <input id="why3"></label>
+  <button id="why3-btn">Done</button>
+</div>
+<div id="controls" style="display:none; margin-top:1em;">
+  <button id="generate">Show Path</button>
+</div>
+<div id="tree"></div>
+<div id="path"></div>
+<div id="saveload" style="display:none; margin-top:1em;">
+  <button id="save">Save Session</button>
+  <button id="load">Load Session</button>
+  <button id="export">Export JSON</button>
+</div>
 <script>
-  // References to elements
-  const welcomeScreen = document.getElementById('welcomeScreen');
-  const step1 = document.getElementById('step1');
-  const step2 = document.getElementById('step2');
-  const step3 = document.getElementById('step3');
-  const step4 = document.getElementById('step4');
-  const resultScreen = document.getElementById('resultScreen');
-  const pastScreen = document.getElementById('pastScreen');
-
-  const beginBtn = document.getElementById('beginBtn');
-  const viewPastBtn = document.getElementById('viewPastBtn');
-  const viewPastBtn2 = document.getElementById('viewPastBtn2');
-  const newSessionBtn = document.getElementById('newSessionBtn');
-  const backBtn = document.getElementById('backBtn');
-  const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-
-  const decisionInput = document.getElementById('decisionInput');
-  const why1Input = document.getElementById('why1Input');
-  const why2Input = document.getElementById('why2Input');
-  const why3Input = document.getElementById('why3Input');
-
-  const next1 = document.getElementById('next1');
-  const next2 = document.getElementById('next2');
-  const next3 = document.getElementById('next3');
-  const finishBtn = document.getElementById('finishBtn');
-
-  const thoughtChainDiv = document.getElementById('thoughtChain');
-  const cognitoPathDiv = document.getElementById('cognitoPath');
-  const sessionList = document.getElementById('sessionList');
-
-  // In-memory storage of current answers
-  let answers = [];
-
-  // Utility to show/hide screens with fade-in effect
-  function showScreen(screen) {
-    [welcomeScreen, step1, step2, step3, step4, resultScreen, pastScreen].forEach(s => {
-      s.classList.add('hidden');
-    });
-    screen.classList.remove('hidden');
-    screen.classList.add('fade-in');
+(function() {
+  // Simple XOR-based encryption/decryption
+  function encrypt(text, password) {
+    let enc = '';
+    for (let i = 0; i < text.length; i++) {
+      enc += String.fromCharCode(text.charCodeAt(i) ^ password.charCodeAt(i % password.length));
+    }
+    return btoa(enc);
   }
-
-  // Event: Begin Mapping
-  beginBtn.addEventListener('click', () => {
-    answers = []; // reset current answers
-    decisionInput.value = '';
-    why1Input.value = '';
-    why2Input.value = '';
-    why3Input.value = '';
-    showScreen(step1);
-  });
-
-  // Event: View Past Sessions from welcome
-  viewPastBtn.addEventListener('click', () => {
-    displayPastSessions();
-    showScreen(pastScreen);
-  });
-
-  // Event: View Past Sessions from result
-  viewPastBtn2.addEventListener('click', () => {
-    displayPastSessions();
-    showScreen(pastScreen);
-  });
-
-  // Event: Back to welcome from past
-  backBtn.addEventListener('click', () => {
-    showScreen(welcomeScreen);
-  });
-
-  // Next buttons for each step
-  next1.addEventListener('click', () => {
-    const decision = decisionInput.value.trim();
-    if (!decision) {
-      alert('Please enter a decision to continue.');
-      return;
+  function decrypt(data, password) {
+    let str = atob(data);
+    let dec = '';
+    for (let i = 0; i < str.length; i++) {
+      dec += String.fromCharCode(str.charCodeAt(i) ^ password.charCodeAt(i % password.length));
     }
-    answers[0] = decision;
-    showScreen(step2);
-  });
-
-  next2.addEventListener('click', () => {
-    const why1 = why1Input.value.trim();
-    if (!why1) {
-      alert('Please enter a reason to continue.');
-      return;
-    }
-    answers[1] = why1;
-    showScreen(step3);
-  });
-
-  next3.addEventListener('click', () => {
-    const why2 = why2Input.value.trim();
-    if (!why2) {
-      alert('Please enter a reason to continue.');
-      return;
-    }
-    answers[2] = why2;
-    showScreen(step4);
-  });
-
-  finishBtn.addEventListener('click', () => {
-    const why3 = why3Input.value.trim();
-    if (!why3) {
-      alert('Please enter a reason to finish.');
-      return;
-    }
-    answers[3] = why3;
-    showResults();
-  });
-
-  // Start new session (go back to welcome)
-  newSessionBtn.addEventListener('click', () => {
-    showScreen(welcomeScreen);
-  });
-
-  // Clear localStorage history
-  clearHistoryBtn.addEventListener('click', () => {
-    if (confirm('Are you sure you want to clear all history?')) {
-      localStorage.removeItem('layer0_sessions');
-      displayPastSessions();
-    }
-  });
-
-  // Display past sessions from localStorage
-  function displayPastSessions() {
-    sessionList.innerHTML = '';
-    const sessions = JSON.parse(localStorage.getItem('layer0_sessions') || '[]');
-    if (sessions.length === 0) {
-      sessionList.innerHTML = '<p>No past sessions found.</p>';
-      return;
-    }
-    sessions.forEach((session, index) => {
-      const item = document.createElement('div');
-      item.className = 'session-item';
-      const date = new Date(session.timestamp);
-      item.innerHTML = `
-        <p><strong>Session ${index + 1}:</strong> ${date.toLocaleString()}</p>
-        <p><strong>Decision:</strong> ${session.decision}</p>
-        <p><strong>Cognito Decision:</strong> ${session.cognitoDecision}</p>
-      `;
-      // Optionally, could include more summary if desired
-      sessionList.appendChild(item);
-    });
+    return dec;
   }
-
-  // Generate cognitopath suggestions from answers
-  function generateCognito(decision, reasons) {
-    // Helper to apply replacements
-    function applyPatterns(text) {
-      let result = text;
-      // Handle "can't lose" specifically
-      if (/can't lose/i.test(result)) {
-        return 'Consider how to manage that risk carefully.';
-      }
-      // Patterns for word replacements
-      const patterns = [
-        [/should/gi, 'could'],
-        [/\bhave to\b/gi, 'can'],
-        [/\bmust\b/gi, 'could'],
-        [/\bcannot\b/gi, 'could try to'],
-        [/\bcan't\b/gi, 'could try to'],
-        [/\bnot sure\b/gi, 'explore and learn about'],
-        [/\bnever\b/gi, 'could someday'],
-        [/\bafraid of\b/gi, 'consider planning for'],
-        [/\bworried about\b/gi, 'focus on addressing the issues of'],
-        [/\bfear\b/gi, 'embrace the challenge of'],
-        [/\bworry(ed)?\b/gi, 'focus on addressing'],
-        [/\bproblem\b/gi, 'opportunity'],
-        [/\bimpossible\b/gi, 'possible'],
-        [/\bfail(ed)?\b/gi, 'succeed']
-      ];
-      patterns.forEach(([pattern, repl]) => {
-        result = result.replace(pattern, repl);
-      });
-      return result;
-    }
-
-    // Generate new decision phrase
-    let newDecision = applyPatterns(decision);
-    if (newDecision.toLowerCase().trim() === decision.toLowerCase().trim()) {
-      newDecision = 'Consider alternative perspective: ' + decision;
-    }
-    // Generate new reasons
-    const newReasons = reasons.map(ans => {
-      let newAns = applyPatterns(ans);
-      if (newAns.toLowerCase().trim() === ans.toLowerCase().trim()) {
-        newAns = 'Perhaps explore differently: ' + ans;
-      }
-      return newAns;
-    });
-    return { newDecision, newReasons };
-  }
-
-  // Show thought chain and cognitopath, save session
-  function showResults() {
-    // Build thought chain list
-    let chainHTML = '<ul>';
-    chainHTML += `<li><strong>Decision:</strong> ${answers[0]}</li>`;
-    chainHTML += `<ul>`;
-    chainHTML += `<li><strong>Reason 1:</strong> ${answers[1]}</li>`;
-    chainHTML += `<ul>`;
-    chainHTML += `<li><strong>Reason 2:</strong> ${answers[2]}</li>`;
-    chainHTML += `<ul>`;
-    chainHTML += `<li><strong>Reason 3:</strong> ${answers[3]}</li>`;
-    chainHTML += `</ul></ul></ul></ul>`;
-    thoughtChainDiv.innerHTML = chainHTML;
-
-    // Generate cognitopath suggestions
-    const { newDecision, newReasons } = generateCognito(answers[0], [answers[1], answers[2], answers[3]]);
-    let cogHTML = '<ul>';
-    cogHTML += `<li><strong>Better Decision:</strong> ${newDecision}</li>`;
-    cogHTML += `<ul>`;
-    cogHTML += `<li><strong>Better Reason 1:</strong> ${newReasons[0]}</li>`;
-    cogHTML += `<ul>`;
-    cogHTML += `<li><strong>Better Reason 2:</strong> ${newReasons[1]}</li>`;
-    cogHTML += `<ul>`;
-    cogHTML += `<li><strong>Better Reason 3:</strong> ${newReasons[2]}</li>`;
-    cogHTML += `</ul></ul></ul></ul>`;
-    cognitoPathDiv.innerHTML = cogHTML;
-
-    // Show result screen
-    showScreen(resultScreen);
-
-    // Save session to localStorage
-    const sessions = JSON.parse(localStorage.getItem('layer0_sessions') || '[]');
-    const sessionData = {
-      timestamp: Date.now(),
-      decision: answers[0],
-      reasons: answers.slice(1),
-      cognitive: newReasons,
-      cognitoDecision: newDecision
+  // Show next section functions
+  document.getElementById('decision-btn').onclick = () => {
+    const val = document.getElementById('decision').value.trim();
+    if (!val) return;
+    document.getElementById('why1section').style.display = 'block';
+  };
+  document.getElementById('why1-btn').onclick = () => {
+    const val = document.getElementById('why1').value.trim();
+    if (!val) return;
+    document.getElementById('why2section').style.display = 'block';
+  };
+  document.getElementById('why2-btn').onclick = () => {
+    const val = document.getElementById('why2').value.trim();
+    if (!val) return;
+    document.getElementById('why3section').style.display = 'block';
+  };
+  document.getElementById('why3-btn').onclick = () => {
+    const val = document.getElementById('why3').value.trim();
+    if (!val) return;
+    document.getElementById('controls').style.display = 'block';
+    document.getElementById('saveload').style.display = 'block';
+  };
+  // Display the thought chain and path
+  document.getElementById('generate').onclick = () => {
+    const decision = document.getElementById('decision').value.trim();
+    const why1 = document.getElementById('why1').value.trim();
+    const why2 = document.getElementById('why2').value.trim();
+    const why3 = document.getElementById('why3').value.trim();
+    const treeHTML = `<ul><li>${decision}<ul><li>${why1}<ul><li>${why2}<ul><li>${why3}</li></ul></li></ul></li></ul></li></ul>`;
+    document.getElementById('tree').innerHTML = treeHTML;
+    document.getElementById('path').textContent = 'Cognito Path: ' + decision + ' → ' + why1 + ' → ' + why2 + ' → ' + why3;
+  };
+  // Save session to localStorage (with optional password encryption)
+  document.getElementById('save').onclick = () => {
+    const data = {
+      decision: document.getElementById('decision').value.trim(),
+      why1: document.getElementById('why1').value.trim(),
+      why2: document.getElementById('why2').value.trim(),
+      why3: document.getElementById('why3').value.trim()
     };
-    sessions.push(sessionData);
-    localStorage.setItem('layer0_sessions', JSON.stringify(sessions));
-  }
-
-  // On load, show welcome screen (and optionally load existing sessions if needed)
-  showScreen(welcomeScreen);
+    const json = JSON.stringify(data);
+    const pw = prompt('Set a password for this session (leave blank for no encryption):');
+    let record;
+    if (pw) {
+      const enc = encrypt(json, pw);
+      record = {content: enc, encrypted: true};
+    } else {
+      record = {content: json, encrypted: false};
+    }
+    localStorage.setItem('layer0', JSON.stringify(record));
+    alert('Session saved locally.');
+  };
+  // Load session from localStorage
+  document.getElementById('load').onclick = () => {
+    const rec = localStorage.getItem('layer0');
+    if (!rec) { alert('No saved session found.'); return; }
+    let record = JSON.parse(rec);
+    let json;
+    if (record.encrypted) {
+      const pw = prompt('Enter password to decrypt data:');
+      if (!pw) return;
+      try {
+        json = decrypt(record.content, pw);
+      } catch(e) {
+        alert('Incorrect password or corrupt data.');
+        return;
+      }
+    } else {
+      json = record.content;
+    }
+    try {
+      const data = JSON.parse(json);
+      document.getElementById('decision').value = data.decision;
+      document.getElementById('why1').value = data.why1;
+      document.getElementById('why2').value = data.why2;
+      document.getElementById('why3').value = data.why3;
+      // reveal all fields
+      document.getElementById('why1section').style.display = 'block';
+      document.getElementById('why2section').style.display = 'block';
+      document.getElementById('why3section').style.display = 'block';
+      document.getElementById('controls').style.display = 'block';
+      document.getElementById('saveload').style.display = 'block';
+      document.getElementById('generate').click();
+    } catch(e) {
+      alert('Failed to load session.');
+    }
+  };
+  // Export current data as JSON file
+  document.getElementById('export').onclick = () => {
+    const data = {
+      decision: document.getElementById('decision').value.trim(),
+      why1: document.getElementById('why1').value.trim(),
+      why2: document.getElementById('why2').value.trim(),
+      why3: document.getElementById('why3').value.trim()
+    };
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'layer0-session.json';
+    a.click();
+  };
+})();
 </script>
 </body>
 </html>
