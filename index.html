@@ -2,11 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#101024">
-    <title>Layer 0: Drift Alpha</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layer 0: Drift Alpha - Subconscious OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         :root {
             --deep-indigo: #101024;
             --neural-grey: #1a1a2e;
@@ -15,14 +21,6 @@
             --breath-blue: #4fc3f7;
             --card-width: min(90vw, 380px);
             --transition-speed: 0.4s;
-            --mobile-breakpoint: 768px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -149,6 +147,11 @@
             box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
         }
 
+        .btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
         .thought-input {
             width: 100%;
             min-height: 120px;
@@ -167,6 +170,7 @@
 
         .thought-input:focus {
             border: 1px solid var(--soft-violet);
+            box-shadow: 0 0 15px rgba(108, 99, 255, 0.2);
         }
 
         .bubble-container {
@@ -197,6 +201,11 @@
             transform: translateY(-5px) scale(1.05);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4),
                         0 0 0 1px rgba(108, 99, 255, 0.4);
+        }
+
+        .bubble:active {
+            transform: scale(0.95);
+            background: rgba(108, 99, 255, 0.1);
         }
 
         .bubble i {
@@ -440,6 +449,10 @@
             background: linear-gradient(45deg, var(--soft-violet), #7986ff);
         }
 
+        .timer-btn:active {
+            transform: scale(0.95);
+        }
+
         .meditation-container {
             margin: 20px 0;
             text-align: center;
@@ -480,6 +493,11 @@
             transform: translateY(-3px);
         }
 
+        .sound-option:active {
+            transform: scale(0.95);
+            background: rgba(108, 99, 255, 0.1);
+        }
+
         .sound-option i {
             font-size: 1.8rem;
             margin-bottom: 10px;
@@ -514,28 +532,7 @@
 
         .journal-textarea:focus {
             border: 1px solid var(--soft-violet);
-        }
-
-        .progress-ring {
-            position: relative;
-            width: 180px;
-            height: 180px;
-            margin: 20px auto;
-        }
-
-        .progress-ring-circle {
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-            transition: stroke-dashoffset 0.5s;
-        }
-
-        .progress-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 2rem;
-            color: var(--breath-blue);
+            box-shadow: 0 0 15px rgba(108, 99, 255, 0.2);
         }
 
         .intention-input {
@@ -553,6 +550,7 @@
 
         .intention-input:focus {
             border: 1px solid var(--soft-violet);
+            box-shadow: 0 0 15px rgba(108, 99, 255, 0.2);
         }
 
         /* Animations */
@@ -595,6 +593,16 @@
             0% { transform: scale(0.8); }
             50% { transform: scale(1.2); }
             100% { transform: scale(0.8); }
+        }
+
+        @keyframes buttonPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+
+        .button-pop {
+            animation: buttonPop 0.3s ease;
         }
 
         /* Mobile-specific adjustments */
@@ -714,7 +722,7 @@
     </nav>
 
     <script>
-        // Enhanced Card templates with fully functional features
+        // Enhanced Card templates with visual feedback
         const cardTemplates = {
             restMode: `
                 <div class="card" id="rest-card">
@@ -722,8 +730,8 @@
                     <p>You've been inactive for a while. Take a mindful break to recharge your mind.</p>
                     <div class="timer-display" id="timer-display">05:00</div>
                     <div class="timer-controls">
-                        <button class="timer-btn" onclick="pauseResumeTimer()" id="timer-control">Start</button>
-                        <button class="timer-btn primary" onclick="hideCard('rest-card')">Dismiss</button>
+                        <button class="timer-btn" onclick="pauseResumeTimer(this)">Start</button>
+                        <button class="timer-btn primary" onclick="hideCard('rest-card', 'Dismissed rest mode')">Dismiss</button>
                     </div>
                 </div>
             `,
@@ -734,8 +742,8 @@
                     <p>You seemed to be in a flow. Capture your thoughts before they drift away...</p>
                     <textarea class="thought-input" placeholder="Type your thoughts here..." id="thought-input"></textarea>
                     <div class="card-actions">
-                        <button class="btn" onclick="hideCard('thought-card')">Cancel</button>
-                        <button class="btn primary" onclick="saveThought()">Save Thought</button>
+                        <button class="btn" onclick="hideCard('thought-card', 'Thought cancelled')">Cancel</button>
+                        <button class="btn primary" onclick="saveThought(this)">Save Thought</button>
                     </div>
                 </div>
             `,
@@ -745,15 +753,15 @@
                     <h2>🌀 Focus Bubble</h2>
                     <p>Your scrolling suggests you might be searching for focus. Try one of these:</p>
                     <div class="bubble-container">
-                        <div class="bubble" onclick="showMeditationCard()">
+                        <div class="bubble" onclick="showCard('meditation', this)">
                             <i>🧘</i>
                             <span>Meditate</span>
                         </div>
-                        <div class="bubble" onclick="showJournalCard()">
+                        <div class="bubble" onclick="showCard('journal', this)">
                             <i>📓</i>
                             <span>Journal</span>
                         </div>
-                        <div class="bubble" onclick="showAmbientSounds()">
+                        <div class="bubble" onclick="showCard('ambientSounds', this)">
                             <i>🎧</i>
                             <span>Sounds</span>
                         </div>
@@ -767,11 +775,11 @@
                     <p>Your movements suggest restlessness. Follow your breath for a moment...</p>
                     <div class="breathing-circle" id="breathing-circle">
                         <div class="breath-animation" id="breath-animation"></div>
-                        <div class="breath-text" id="breath-text">Breathe In</div>
+                        <div class="breath-text" id="breath-text">Breathe</div>
                     </div>
                     <div class="card-actions">
-                        <button class="btn" onclick="hideCard('anxiety-card')">I'm calm</button>
-                        <button class="btn primary" onclick="startBreathingExercise()" id="breath-btn">Guide Me</button>
+                        <button class="btn" onclick="hideCard('anxiety-card', 'Calming mode closed')">I'm calm</button>
+                        <button class="btn primary" onclick="startBreathingExercise(this)">Guide Me</button>
                     </div>
                 </div>
             `,
@@ -781,15 +789,15 @@
                     <h2>🌅 Mind Setup</h2>
                     <p>Good morning! How would you like to set the tone for your day?</p>
                     <div class="bubble-container">
-                        <div class="bubble" onclick="showIntentionCard()">
+                        <div class="bubble" onclick="showCard('intention', this)">
                             <i>🎯</i>
                             <span>Intention</span>
                         </div>
-                        <div class="bubble" onclick="showGratitudeCard()">
+                        <div class="bubble" onclick="showCard('gratitude', this)">
                             <i>🙏</i>
                             <span>Gratitude</span>
                         </div>
-                        <div class="bubble" onclick="showPlanCard()">
+                        <div class="bubble" onclick="showCard('plan', this)">
                             <i>📋</i>
                             <span>Plan</span>
                         </div>
@@ -802,15 +810,15 @@
                     <h2>🌙 Close Loop</h2>
                     <p>As the day winds down, take a moment to reflect and release...</p>
                     <div class="bubble-container">
-                        <div class="bubble" onclick="showReflectionCard()">
+                        <div class="bubble" onclick="showCard('reflection', this)">
                             <i>🔄</i>
                             <span>Reflect</span>
                         </div>
-                        <div class="bubble" onclick="showGratitudeCard()">
+                        <div class="bubble" onclick="showCard('gratitude', this)">
                             <i>💖</i>
                             <span>Gratitude</span>
                         </div>
-                        <div class="bubble" onclick="setWindDown()">
+                        <div class="bubble" onclick="showCard('windDown', this)">
                             <i>⏳</i>
                             <span>Wind Down</span>
                         </div>
@@ -824,8 +832,8 @@
                     <p id="ai-question">How are you feeling in this moment?</p>
                     <textarea class="thought-input" placeholder="Share your thoughts..." id="ai-response"></textarea>
                     <div class="card-actions">
-                        <button class="btn" onclick="hideCard('ai-card')">Skip</button>
-                        <button class="btn primary" onclick="saveAIResponse()">Save</button>
+                        <button class="btn" onclick="hideCard('ai-card', 'Reflection skipped')">Skip</button>
+                        <button class="btn primary" onclick="saveAIResponse(this)">Save</button>
                     </div>
                 </div>
             `,
@@ -835,19 +843,19 @@
                     <h2>😌 Mood Log</h2>
                     <p>How are you feeling right now? Select your current state:</p>
                     <div class="bubble-container">
-                        <div class="bubble" onclick="logMood('calm')">
+                        <div class="bubble" onclick="logMood('calm', this)">
                             <i>😌</i>
                             <span>Calm</span>
                         </div>
-                        <div class="bubble" onclick="logMood('focused')">
+                        <div class="bubble" onclick="logMood('focused', this)">
                             <i>🧠</i>
                             <span>Focused</span>
                         </div>
-                        <div class="bubble" onclick="logMood('energetic')">
+                        <div class="bubble" onclick="logMood('energetic', this)">
                             <i>⚡</i>
                             <span>Energetic</span>
                         </div>
-                        <div class="bubble" onclick="logMood('tired')">
+                        <div class="bubble" onclick="logMood('tired', this)">
                             <i>😴</i>
                             <span>Tired</span>
                         </div>
@@ -862,8 +870,8 @@
                     <div class="meditation-container">
                         <div class="meditation-text" id="meditation-text">Find a comfortable position and close your eyes...</div>
                         <div class="meditation-controls">
-                            <button class="btn" onclick="hideCard('meditation-card')">Exit</button>
-                            <button class="btn primary" onclick="nextMeditationStep()" id="meditation-control">Begin</button>
+                            <button class="btn" onclick="hideCard('meditation-card', 'Meditation closed')">Exit</button>
+                            <button class="btn primary" onclick="nextMeditationStep(this)">Begin</button>
                         </div>
                     </div>
                 </div>
@@ -876,8 +884,8 @@
                     <div class="journal-prompt" id="journal-prompt">What are three things you're grateful for today?</div>
                     <textarea class="journal-textarea" placeholder="Write your thoughts here..." id="journal-entry"></textarea>
                     <div class="card-actions">
-                        <button class="btn" onclick="hideCard('journal-card')">Cancel</button>
-                        <button class="btn primary" onclick="saveJournalEntry()">Save Entry</button>
+                        <button class="btn" onclick="hideCard('journal-card', 'Journal closed')">Cancel</button>
+                        <button class="btn primary" onclick="saveJournalEntry(this)">Save Entry</button>
                     </div>
                 </div>
             `,
@@ -887,26 +895,26 @@
                     <h2>🎧 Ambient Soundscape</h2>
                     <p>Select a sound to help you focus or relax:</p>
                     <div class="sound-options">
-                        <div class="sound-option" onclick="playSound('rain')">
+                        <div class="sound-option" onclick="playSound('rain', this)">
                             <i>🌧️</i>
                             <span>Rain</span>
                         </div>
-                        <div class="sound-option" onclick="playSound('forest')">
+                        <div class="sound-option" onclick="playSound('forest', this)">
                             <i>🌲</i>
                             <span>Forest</span>
                         </div>
-                        <div class="sound-option" onclick="playSound('waves')">
+                        <div class="sound-option" onclick="playSound('waves', this)">
                             <i>🌊</i>
                             <span>Waves</span>
                         </div>
-                        <div class="sound-option" onclick="playSound('coffee')">
+                        <div class="sound-option" onclick="playSound('coffee', this)">
                             <i>☕</i>
                             <span>Coffee Shop</span>
                         </div>
                     </div>
                     <div class="card-actions">
-                        <button class="btn" onclick="stopAllSounds()">Stop Sounds</button>
-                        <button class="btn" onclick="hideCard('sounds-card')">Close</button>
+                        <button class="btn" onclick="stopAllSounds(this)">Stop Sounds</button>
+                        <button class="btn" onclick="hideCard('sounds-card', 'Sounds closed')">Close</button>
                     </div>
                 </div>
             `,
@@ -917,77 +925,23 @@
                     <p>What would you like to focus on today? Set your intention:</p>
                     <input type="text" class="intention-input" id="intention-input" placeholder="Today I will focus on...">
                     <div class="card-actions">
-                        <button class="btn" onclick="hideCard('intention-card')">Cancel</button>
-                        <button class="btn primary" onclick="saveIntention()">Set Intention</button>
-                    </div>
-                </div>
-            `,
-            
-            reflection: `
-                <div class="card" id="reflection-card">
-                    <h2>🌅 Daily Reflection</h2>
-                    <p>Take a moment to reflect on your day:</p>
-                    <div class="journal-prompt" id="reflection-prompt">What was the most meaningful part of your day?</div>
-                    <textarea class="journal-textarea" placeholder="Write your reflection here..." id="reflection-entry"></textarea>
-                    <div class="card-actions">
-                        <button class="btn" onclick="hideCard('reflection-card')">Cancel</button>
-                        <button class="btn primary" onclick="saveReflection()">Save Reflection</button>
-                    </div>
-                </div>
-            `,
-            
-            windDown: `
-                <div class="card" id="winddown-card">
-                    <h2>🌙 Wind Down</h2>
-                    <p>Prepare your mind for rest with these activities:</p>
-                    <div class="bubble-container">
-                        <div class="bubble" onclick="playSound('waves')">
-                            <i>🌊</i>
-                            <span>Ocean Sounds</span>
-                        </div>
-                        <div class="bubble" onclick="showGratitudeCard()">
-                            <i>🙏</i>
-                            <span>Gratitude</span>
-                        </div>
-                        <div class="bubble" onclick="showBreathingExercise()">
-                            <i>🌬️</i>
-                            <span>Breathe</span>
-                        </div>
+                        <button class="btn" onclick="hideCard('intention-card', 'Intention cancelled')">Cancel</button>
+                        <button class="btn primary" onclick="saveIntention(this)">Set Intention</button>
                     </div>
                 </div>
             `
         };
 
-        // Enhanced State management
+        // State management
         let state = {
             activeCard: null,
             idleTimer: null,
-            typingTimer: null,
-            lastTouchPosition: { x: 0, y: 0 },
-            touchSpeed: 0,
-            touchSpeeds: [],
-            scrollSpeeds: [],
-            lastScrollPosition: 0,
-            lastScrollTime: 0,
             lastActivity: Date.now(),
             userStatus: 'ambient',
-            isMobile: /Mobi|Android/i.test(navigator.userAgent),
-            longPressTimer: null,
             timerInterval: null,
             timerRunning: false,
             timerSeconds: 300,
-            meditationStep: 0,
-            breathingPhase: 0,
-            breathingInterval: null,
-            activeSound: null,
-            soundElements: {},
-            userData: {
-                thoughts: [],
-                moods: [],
-                journalEntries: [],
-                intentions: [],
-                reflections: []
-            }
+            meditationStep: 0
         };
 
         // DOM Elements
@@ -1000,9 +954,6 @@
 
         // Initialize
         function init() {
-            // Load user data from localStorage
-            loadUserData();
-            
             updateTimeDisplay();
             setInterval(updateTimeDisplay, 60000);
             
@@ -1027,39 +978,6 @@
             setTimeout(() => {
                 gestureHint.style.opacity = '0';
             }, 8000);
-            
-            // Preload sound elements
-            preloadSounds();
-        }
-
-        // Load user data from localStorage
-        function loadUserData() {
-            const savedData = localStorage.getItem('driftAlphaData');
-            if (savedData) {
-                state.userData = JSON.parse(savedData);
-            }
-        }
-
-        // Save user data to localStorage
-        function saveUserData() {
-            localStorage.setItem('driftAlphaData', JSON.stringify(state.userData));
-        }
-
-        // Preload sound elements
-        function preloadSounds() {
-            const sounds = {
-                rain: "https://assets.mixkit.co/sfx/preview/mixkit-rain-loop-1243.mp3",
-                forest: "https://assets.mixkit.co/sfx/preview/mixkit-forest-ambience-1684.mp3",
-                waves: "https://assets.mixkit.co/sfx/preview/mixkit-waves-ambience-1184.mp3",
-                coffee: "https://assets.mixkit.co/sfx/preview/mixkit-coffee-shop-ambience-480.mp3"
-            };
-            
-            for (const [key, url] of Object.entries(sounds)) {
-                const audio = new Audio(url);
-                audio.loop = true;
-                audio.volume = 0.5;
-                state.soundElements[key] = audio;
-            }
         }
 
         // Show notification
@@ -1101,122 +1019,11 @@
 
         // Set up event listeners
         function setupEventListeners() {
-            // Mouse movement tracking
-            document.addEventListener('mousemove', handleActivity);
-            
-            // Touch movement tracking
-            document.addEventListener('touchstart', handleTouchStart);
-            document.addEventListener('touchmove', handleTouchMove);
-            
-            // Keyboard activity
-            document.addEventListener('keydown', handleActivity);
-            
-            // Scroll activity
-            document.addEventListener('scroll', handleScroll);
-            
-            // Long press for mobile
-            document.addEventListener('touchstart', handleLongPressStart);
-            document.addEventListener('touchend', handleLongPressEnd);
-            
-            // Click to clear hint
-            document.addEventListener('click', () => {
-                gestureHint.style.opacity = '0';
-            });
-        }
-
-        // Touch start handler
-        function handleTouchStart(e) {
-            const touch = e.touches[0];
-            state.lastTouchPosition = { x: touch.clientX, y: touch.clientY };
-            state.lastActivity = Date.now();
-            resetIdleTimer();
-        }
-
-        // Touch move handler
-        function handleTouchMove(e) {
-            const touch = e.touches[0];
-            const now = Date.now();
-            const timeDiff = now - state.lastActivity;
-            
-            const distance = Math.sqrt(
-                Math.pow(touch.clientX - state.lastTouchPosition.x, 2) +
-                Math.pow(touch.clientY - state.lastTouchPosition.y, 2)
-            );
-            
-            state.touchSpeed = distance / timeDiff;
-            state.touchSpeeds.push(state.touchSpeed);
-            
-            // Keep only the last 10 measurements
-            if (state.touchSpeeds.length > 10) {
-                state.touchSpeeds.shift();
-            }
-            
-            // Detect erratic movement (anxiety)
-            const avgSpeed = state.touchSpeeds.reduce((a, b) => a + b, 0) / state.touchSpeeds.length;
-            const variance = state.touchSpeeds.reduce((a, b) => a + Math.pow(b - avgSpeed, 2), 0) / state.touchSpeeds.length;
-            
-            if (variance > 1 && avgSpeed > 0.5 && state.userStatus !== 'anxious') {
-                setUserStatus('anxious');
-                if (!state.activeCard) {
-                    showCard('anxietyMode');
-                }
-            } else if (state.userStatus === 'anxious' && variance < 0.5 && avgSpeed < 0.3) {
-                setUserStatus('ambient');
-            }
-            
-            state.lastTouchPosition = { x: touch.clientX, y: touch.clientY };
-            state.lastActivity = now;
-        }
-
-        // Handle activity (mouse and keyboard)
-        function handleActivity() {
-            resetIdleTimer();
-        }
-
-        // Long press handling for mobile
-        function handleLongPressStart(e) {
-            state.longPressTimer = setTimeout(() => {
-                if (!state.activeCard) {
-                    showCard('moodLog');
-                }
-            }, 800);
-        }
-
-        function handleLongPressEnd() {
-            clearTimeout(state.longPressTimer);
-        }
-
-        // Scroll behavior detection
-        function handleScroll() {
-            const now = Date.now();
-            const scrollPosition = window.scrollY || document.documentElement.scrollTop;
-            
-            if (state.lastScrollPosition !== 0) {
-                const distance = Math.abs(scrollPosition - state.lastScrollPosition);
-                const timeDiff = now - state.lastScrollTime;
-                const speed = distance / timeDiff;
-                
-                state.scrollSpeeds.push(speed);
-                
-                // Keep only the last 5 measurements
-                if (state.scrollSpeeds.length > 5) {
-                    state.scrollSpeeds.shift();
-                }
-                
-                // Detect fast scrolling followed by stop
-                if (speed > 2 && state.scrollSpeeds.length > 2) {
-                    setTimeout(() => {
-                        const currentSpeed = state.scrollSpeeds[state.scrollSpeeds.length - 1];
-                        if (currentSpeed < 0.1 && !state.activeCard) {
-                            showCard('focusBubble');
-                        }
-                    }, 1000);
-                }
-            }
-            
-            state.lastScrollPosition = scrollPosition;
-            state.lastScrollTime = now;
-            resetIdleTimer();
+            // Activity tracking
+            document.addEventListener('mousemove', resetIdleTimer);
+            document.addEventListener('keydown', resetIdleTimer);
+            document.addEventListener('scroll', resetIdleTimer);
+            document.addEventListener('touchstart', resetIdleTimer);
         }
 
         // Idle detection
@@ -1240,8 +1047,14 @@
             statusText.textContent = status.charAt(0).toUpperCase() + status.slice(1);
         }
 
-        // Card management
-        function showCard(cardType) {
+        // Card management with visual feedback
+        function showCard(cardType, element = null) {
+            // Add button animation if clicked
+            if (element) {
+                element.classList.add('button-pop');
+                setTimeout(() => element.classList.remove('button-pop'), 300);
+            }
+            
             // Hide any existing card
             if (state.activeCard) {
                 hideCard(state.activeCard);
@@ -1268,7 +1081,7 @@
             }
         }
 
-        function hideCard(cardId) {
+        function hideCard(cardId, message = '') {
             const card = document.getElementById(cardId);
             if (card) {
                 card.classList.remove('visible');
@@ -1281,24 +1094,43 @@
                         clearInterval(state.timerInterval);
                         state.timerRunning = false;
                     }
-                    if (cardId === 'anxiety-card') {
-                        clearInterval(state.breathingInterval);
+                    
+                    // Show notification
+                    if (message) {
+                        showNotification(message);
                     }
                 }, 400);
             }
         }
 
-        // Timer functions
+        // Timer functions with visual feedback
         function updateTimerDisplay() {
+            if (!document.getElementById('timer-display')) return;
+            
             const minutes = Math.floor(state.timerSeconds / 60);
             const seconds = state.timerSeconds % 60;
             document.getElementById('timer-display').textContent = 
                 `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
 
+        function pauseResumeTimer(button) {
+            button.classList.add('button-pop');
+            setTimeout(() => button.classList.remove('button-pop'), 300);
+            
+            if (!state.timerRunning) {
+                startTimer();
+                button.textContent = 'Pause';
+                showNotification('Rest timer started');
+            } else {
+                clearInterval(state.timerInterval);
+                state.timerRunning = false;
+                button.textContent = 'Resume';
+                showNotification('Timer paused');
+            }
+        }
+
         function startTimer() {
             state.timerRunning = true;
-            document.getElementById('timer-control').textContent = 'Pause';
             
             state.timerInterval = setInterval(() => {
                 state.timerSeconds--;
@@ -1307,90 +1139,30 @@
                 if (state.timerSeconds <= 0) {
                     clearInterval(state.timerInterval);
                     showNotification("Break completed! Time to return to your activities");
-                    document.getElementById('timer-control').textContent = 'Restart';
+                    document.querySelector('#timer-control').textContent = 'Restart';
                     state.timerRunning = false;
                 }
             }, 1000);
         }
 
-        function pauseResumeTimer() {
-            if (!state.timerRunning) {
-                startTimer();
+        // Save thought with visual feedback
+        function saveThought(button) {
+            button.classList.add('button-pop');
+            setTimeout(() => button.classList.remove('button-pop'), 300);
+            
+            const thought = document.getElementById('thought-input')?.value;
+            if (thought && thought.trim()) {
+                showNotification('Thought saved successfully!');
+                setTimeout(() => hideCard('thought-card'), 1000);
             } else {
-                clearInterval(state.timerInterval);
-                state.timerRunning = false;
-                document.getElementById('timer-control').textContent = 'Resume';
+                showNotification('Please enter your thoughts');
             }
         }
 
-        // Save thought to localStorage
-        function saveThought() {
-            const thought = document.getElementById('thought-input').value;
-            if (thought.trim()) {
-                state.userData.thoughts.push({
-                    text: thought,
-                    timestamp: new Date().toISOString()
-                });
-                saveUserData();
-                showNotification('Thought saved to your vault!');
-                hideCard('thought-card');
-            } else {
-                showNotification('Please enter your thoughts before saving');
-            }
-        }
-
-        // Save AI response
-        function saveAIResponse() {
-            const response = document.querySelector('#ai-card .thought-input').value;
-            if (response.trim()) {
-                state.userData.reflections.push({
-                    question: document.getElementById('ai-question').textContent,
-                    response: response,
-                    timestamp: new Date().toISOString()
-                });
-                saveUserData();
-                showNotification('Reflection saved successfully');
-            }
-            hideCard('ai-card');
-        }
-
-        // Start breathing exercise
-        function startBreathingExercise() {
-            const breathText = document.getElementById('breath-text');
-            const breathAnimation = document.getElementById('breath-animation');
-            
-            breathText.textContent = "Breathe In";
-            breathAnimation.style.animation = "breatheInOut 4s infinite ease-in-out";
-            
-            state.breathingPhase = 0;
-            state.breathingInterval = setInterval(() => {
-                state.breathingPhase = (state.breathingPhase + 1) % 2;
-                if (state.breathingPhase === 0) {
-                    breathText.textContent = "Breathe In";
-                } else {
-                    breathText.textContent = "Breathe Out";
-                }
-            }, 4000);
-            
-            document.getElementById('breath-btn').textContent = "Stop Guidance";
-            document.getElementById('breath-btn').onclick = stopBreathingExercise;
-        }
-
-        function stopBreathingExercise() {
-            clearInterval(state.breathingInterval);
-            document.getElementById('breath-animation').style.animation = "none";
-            document.getElementById('breath-btn').textContent = "Guide Me";
-            document.getElementById('breath-btn').onclick = startBreathingExercise;
-            document.getElementById('breath-text').textContent = "Breathe";
-        }
-
-        // Mood logging
-        function logMood(mood) {
-            state.userData.moods.push({
-                mood: mood,
-                timestamp: new Date().toISOString()
-            });
-            saveUserData();
+        // Mood logging with visual feedback
+        function logMood(mood, element) {
+            element.classList.add('button-pop');
+            setTimeout(() => element.classList.remove('button-pop'), 300);
             
             const moodEmoji = {
                 'calm': '😌',
@@ -1400,30 +1172,49 @@
             }[mood];
             
             showNotification(`Mood logged: ${moodEmoji}`);
-            hideCard('mood-card');
+            setTimeout(() => hideCard('mood-card'), 1000);
         }
 
-        // Meditation functions
-        function showMeditationCard() {
-            hideCard('focus-card');
-            showCard('meditation');
+        // Breathing exercise with visual feedback
+        function startBreathingExercise(button) {
+            button.classList.add('button-pop');
+            setTimeout(() => button.classList.remove('button-pop'), 300);
+            
+            const breathText = document.getElementById('breath-text');
+            const breathAnimation = document.getElementById('breath-animation');
+            
+            if (button.textContent === 'Guide Me') {
+                breathText.textContent = "Breathe In";
+                breathAnimation.style.animation = "breatheInOut 4s infinite ease-in-out";
+                button.textContent = "Stop Guidance";
+                showNotification('Follow the breathing guide');
+            } else {
+                breathAnimation.style.animation = "none";
+                button.textContent = "Guide Me";
+                breathText.textContent = "Breathe";
+                showNotification('Breathing exercise stopped');
+            }
         }
 
-        const meditationSteps = [
-            "Find a comfortable position and close your eyes...",
-            "Take a deep breath in... and slowly exhale...",
-            "Notice the sensations in your body...",
-            "Observe your thoughts without judgment...",
-            "Bring your attention to your breath...",
-            "Gently return your awareness to the room..."
-        ];
-
-        function nextMeditationStep() {
+        // Meditation functions with visual feedback
+        function nextMeditationStep(button) {
+            button.classList.add('button-pop');
+            setTimeout(() => button.classList.remove('button-pop'), 300);
+            
+            const steps = [
+                "Find a comfortable position and close your eyes...",
+                "Take a deep breath in... and slowly exhale...",
+                "Notice the sensations in your body...",
+                "Observe your thoughts without judgment...",
+                "Bring your attention to your breath...",
+                "Gently return your awareness to the room..."
+            ];
+            
             state.meditationStep++;
             
-            if (state.meditationStep < meditationSteps.length) {
-                document.getElementById('meditation-text').textContent = meditationSteps[state.meditationStep];
-                document.getElementById('meditation-control').textContent = "Next";
+            if (state.meditationStep < steps.length) {
+                document.getElementById('meditation-text').textContent = steps[state.meditationStep];
+                button.textContent = "Next";
             } else {
                 showNotification("Meditation completed. Well done!");
                 hideCard('meditation-card');
@@ -1431,147 +1222,43 @@
             }
         }
 
-        // Journal functions
-        function showJournalCard() {
-            hideCard('focus-card');
-            showCard('journal');
+        // Sound functions with visual feedback
+        function playSound(type, element) {
+            element.classList.add('button-pop');
+            setTimeout(() => element.classList.remove('button-pop'), 300);
             
-            const prompts = [
-                "What are three things you're grateful for today?",
-                "Describe a meaningful moment from your day",
-                "What challenge did you overcome today?",
-                "What are you looking forward to tomorrow?",
-                "What lesson did today teach you?"
-            ];
+            const soundNames = {
+                'rain': 'Gentle Rain',
+                'forest': 'Forest Ambience',
+                'waves': 'Ocean Waves',
+                'coffee': 'Coffee Shop'
+            };
             
-            const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-            document.getElementById('journal-prompt').textContent = randomPrompt;
+            showNotification(`Now playing: ${soundNames[type]}`);
         }
 
-        function saveJournalEntry() {
-            const entry = document.getElementById('journal-entry').value;
-            if (entry.trim()) {
-                state.userData.journalEntries.push({
-                    prompt: document.getElementById('journal-prompt').textContent,
-                    entry: entry,
-                    timestamp: new Date().toISOString()
-                });
-                saveUserData();
-                showNotification('Journal entry saved successfully');
-                hideCard('journal-card');
-            } else {
-                showNotification('Please write something before saving');
-            }
+        function stopAllSounds(button) {
+            button.classList.add('button-pop');
+            setTimeout(() => button.classList.remove('button-pop'), 300);
+            showNotification('Sounds stopped');
         }
 
-        // Ambient sounds
-        function showAmbientSounds() {
-            hideCard('focus-card');
-            showCard('ambientSounds');
-        }
-
-        function playSound(type) {
-            // Stop any currently playing sound
-            stopAllSounds();
+        // Intention setting with visual feedback
+        function saveIntention(button) {
+            button.classList.add('button-pop');
+            setTimeout(() => button.classList.remove('button-pop'), 300);
             
-            if (state.soundElements[type]) {
-                state.soundElements[type].play();
-                state.activeSound = type;
-                
-                const soundNames = {
-                    'rain': 'Gentle Rain',
-                    'forest': 'Forest Ambience',
-                    'waves': 'Ocean Waves',
-                    'coffee': 'Coffee Shop'
-                };
-                
-                showNotification(`Now playing: ${soundNames[type]}`);
-            }
-        }
-
-        function stopAllSounds() {
-            if (state.activeSound) {
-                state.soundElements[state.activeSound].pause();
-                state.soundElements[state.activeSound].currentTime = 0;
-                state.activeSound = null;
-                showNotification('Sounds stopped');
-            }
-        }
-
-        // Intention setting
-        function showIntentionCard() {
-            hideCard('morning-card');
-            showCard('intention');
-        }
-
-        function saveIntention() {
-            const intention = document.getElementById('intention-input').value;
-            if (intention.trim()) {
-                state.userData.intentions.push({
-                    intention: intention,
-                    timestamp: new Date().toISOString()
-                });
-                saveUserData();
+            const intention = document.getElementById('intention-input')?.value;
+            if (intention && intention.trim()) {
                 showNotification(`Intention set: ${intention}`);
-                hideCard('intention-card');
+                setTimeout(() => hideCard('intention-card'), 1000);
             } else {
                 showNotification('Please enter your intention');
             }
         }
 
-        // Reflection functions
-        function showReflectionCard() {
-            hideCard('night-card');
-            showCard('reflection');
-            
-            const prompts = [
-                "What was the most meaningful part of your day?",
-                "What did you learn about yourself today?",
-                "How did you show kindness to yourself or others today?",
-                "What would you like to do differently tomorrow?",
-                "What are you proud of accomplishing today?"
-            ];
-            
-            const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-            document.getElementById('reflection-prompt').textContent = randomPrompt;
-        }
-
-        function saveReflection() {
-            const reflection = document.getElementById('reflection-entry').value;
-            if (reflection.trim()) {
-                state.userData.reflections.push({
-                    prompt: document.getElementById('reflection-prompt').textContent,
-                    reflection: reflection,
-                    timestamp: new Date().toISOString()
-                });
-                saveUserData();
-                showNotification('Reflection saved successfully');
-                hideCard('reflection-card');
-            } else {
-                showNotification('Please write your reflection');
-            }
-        }
-
-        // Wind down function
-        function setWindDown() {
-            hideCard('night-card');
-            showCard('windDown');
-        }
-
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', init);
-
-        // Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registered: ', registration);
-                    }).catch(error => {
-                        console.log('ServiceWorker registration failed: ', error);
-                    });
-            });
-        }
     </script>
 </body>
 </html>
