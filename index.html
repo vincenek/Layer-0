@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#101024">
     <title>Layer 0: Drift Alpha</title>
-    <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <style>
         :root {
             --deep-indigo: #101024;
@@ -715,7 +714,7 @@
     </nav>
 
     <script>
-        // Enhanced Card templates with interactive features
+        // Enhanced Card templates with fully functional features
         const cardTemplates = {
             restMode: `
                 <div class="card" id="rest-card">
@@ -922,6 +921,40 @@
                         <button class="btn primary" onclick="saveIntention()">Set Intention</button>
                     </div>
                 </div>
+            `,
+            
+            reflection: `
+                <div class="card" id="reflection-card">
+                    <h2>🌅 Daily Reflection</h2>
+                    <p>Take a moment to reflect on your day:</p>
+                    <div class="journal-prompt" id="reflection-prompt">What was the most meaningful part of your day?</div>
+                    <textarea class="journal-textarea" placeholder="Write your reflection here..." id="reflection-entry"></textarea>
+                    <div class="card-actions">
+                        <button class="btn" onclick="hideCard('reflection-card')">Cancel</button>
+                        <button class="btn primary" onclick="saveReflection()">Save Reflection</button>
+                    </div>
+                </div>
+            `,
+            
+            windDown: `
+                <div class="card" id="winddown-card">
+                    <h2>🌙 Wind Down</h2>
+                    <p>Prepare your mind for rest with these activities:</p>
+                    <div class="bubble-container">
+                        <div class="bubble" onclick="playSound('waves')">
+                            <i>🌊</i>
+                            <span>Ocean Sounds</span>
+                        </div>
+                        <div class="bubble" onclick="showGratitudeCard()">
+                            <i>🙏</i>
+                            <span>Gratitude</span>
+                        </div>
+                        <div class="bubble" onclick="showBreathingExercise()">
+                            <i>🌬️</i>
+                            <span>Breathe</span>
+                        </div>
+                    </div>
+                </div>
             `
         };
 
@@ -946,7 +979,15 @@
             meditationStep: 0,
             breathingPhase: 0,
             breathingInterval: null,
-            activeSound: null
+            activeSound: null,
+            soundElements: {},
+            userData: {
+                thoughts: [],
+                moods: [],
+                journalEntries: [],
+                intentions: [],
+                reflections: []
+            }
         };
 
         // DOM Elements
@@ -959,6 +1000,9 @@
 
         // Initialize
         function init() {
+            // Load user data from localStorage
+            loadUserData();
+            
             updateTimeDisplay();
             setInterval(updateTimeDisplay, 60000);
             
@@ -983,6 +1027,39 @@
             setTimeout(() => {
                 gestureHint.style.opacity = '0';
             }, 8000);
+            
+            // Preload sound elements
+            preloadSounds();
+        }
+
+        // Load user data from localStorage
+        function loadUserData() {
+            const savedData = localStorage.getItem('driftAlphaData');
+            if (savedData) {
+                state.userData = JSON.parse(savedData);
+            }
+        }
+
+        // Save user data to localStorage
+        function saveUserData() {
+            localStorage.setItem('driftAlphaData', JSON.stringify(state.userData));
+        }
+
+        // Preload sound elements
+        function preloadSounds() {
+            const sounds = {
+                rain: "https://assets.mixkit.co/sfx/preview/mixkit-rain-loop-1243.mp3",
+                forest: "https://assets.mixkit.co/sfx/preview/mixkit-forest-ambience-1684.mp3",
+                waves: "https://assets.mixkit.co/sfx/preview/mixkit-waves-ambience-1184.mp3",
+                coffee: "https://assets.mixkit.co/sfx/preview/mixkit-coffee-shop-ambience-480.mp3"
+            };
+            
+            for (const [key, url] of Object.entries(sounds)) {
+                const audio = new Audio(url);
+                audio.loop = true;
+                audio.volume = 0.5;
+                state.soundElements[key] = audio;
+            }
         }
 
         // Show notification
@@ -1189,15 +1266,6 @@
                 state.timerSeconds = 300;
                 updateTimerDisplay();
             }
-            
-            // AI prompt after 2 minutes of no interaction
-            if (cardType !== 'aiPrompt') {
-                setTimeout(() => {
-                    if (state.activeCard === cardId) {
-                        showAIPrompt();
-                    }
-                }, 120000);
-            }
         }
 
         function hideCard(cardId) {
@@ -1218,33 +1286,6 @@
                     }
                 }, 400);
             }
-        }
-
-        // Show AI prompt
-        function showAIPrompt() {
-            if (state.activeCard) return;
-            
-            const prompts = [
-                "How are you feeling right now?",
-                "What's occupying your mind at this moment?",
-                "Is there something you need to get off your chest?",
-                "What are you grateful for today?",
-                "What would make today meaningful for you?"
-            ];
-            
-            const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-            
-            // Create card
-            layer0.insertAdjacentHTML('beforeend', cardTemplates.aiPrompt);
-            document.getElementById('ai-question').textContent = randomPrompt;
-            
-            const card = document.getElementById('ai-card');
-            state.activeCard = 'ai-card';
-            
-            // Animate in
-            setTimeout(() => {
-                card.classList.add('visible');
-            }, 10);
         }
 
         // Timer functions
@@ -1286,12 +1327,11 @@
         function saveThought() {
             const thought = document.getElementById('thought-input').value;
             if (thought.trim()) {
-                const thoughts = JSON.parse(localStorage.getItem('thoughts') || '[]');
-                thoughts.push({
+                state.userData.thoughts.push({
                     text: thought,
                     timestamp: new Date().toISOString()
                 });
-                localStorage.setItem('thoughts', JSON.stringify(thoughts));
+                saveUserData();
                 showNotification('Thought saved to your vault!');
                 hideCard('thought-card');
             } else {
@@ -1303,12 +1343,12 @@
         function saveAIResponse() {
             const response = document.querySelector('#ai-card .thought-input').value;
             if (response.trim()) {
-                const responses = JSON.parse(localStorage.getItem('aiResponses') || '[]');
-                responses.push({
+                state.userData.reflections.push({
+                    question: document.getElementById('ai-question').textContent,
                     response: response,
                     timestamp: new Date().toISOString()
                 });
-                localStorage.setItem('aiResponses', JSON.stringify(responses));
+                saveUserData();
                 showNotification('Reflection saved successfully');
             }
             hideCard('ai-card');
@@ -1346,12 +1386,11 @@
 
         // Mood logging
         function logMood(mood) {
-            const moods = JSON.parse(localStorage.getItem('moods') || '[]');
-            moods.push({
+            state.userData.moods.push({
                 mood: mood,
                 timestamp: new Date().toISOString()
             });
-            localStorage.setItem('moods', JSON.stringify(moods));
+            saveUserData();
             
             const moodEmoji = {
                 'calm': '😌',
@@ -1412,13 +1451,12 @@
         function saveJournalEntry() {
             const entry = document.getElementById('journal-entry').value;
             if (entry.trim()) {
-                const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-                entries.push({
+                state.userData.journalEntries.push({
                     prompt: document.getElementById('journal-prompt').textContent,
                     entry: entry,
                     timestamp: new Date().toISOString()
                 });
-                localStorage.setItem('journalEntries', JSON.stringify(entries));
+                saveUserData();
                 showNotification('Journal entry saved successfully');
                 hideCard('journal-card');
             } else {
@@ -1433,22 +1471,30 @@
         }
 
         function playSound(type) {
-            // In a real implementation, we would play actual sounds
-            const soundNames = {
-                'rain': 'Gentle Rain',
-                'forest': 'Forest Ambience',
-                'waves': 'Ocean Waves',
-                'coffee': 'Coffee Shop'
-            };
+            // Stop any currently playing sound
+            stopAllSounds();
             
-            showNotification(`Playing: ${soundNames[type]}`);
-            state.activeSound = type;
+            if (state.soundElements[type]) {
+                state.soundElements[type].play();
+                state.activeSound = type;
+                
+                const soundNames = {
+                    'rain': 'Gentle Rain',
+                    'forest': 'Forest Ambience',
+                    'waves': 'Ocean Waves',
+                    'coffee': 'Coffee Shop'
+                };
+                
+                showNotification(`Now playing: ${soundNames[type]}`);
+            }
         }
 
         function stopAllSounds() {
             if (state.activeSound) {
-                showNotification('Sounds stopped');
+                state.soundElements[state.activeSound].pause();
+                state.soundElements[state.activeSound].currentTime = 0;
                 state.activeSound = null;
+                showNotification('Sounds stopped');
             }
         }
 
@@ -1461,12 +1507,55 @@
         function saveIntention() {
             const intention = document.getElementById('intention-input').value;
             if (intention.trim()) {
-                localStorage.setItem('dailyIntention', intention);
+                state.userData.intentions.push({
+                    intention: intention,
+                    timestamp: new Date().toISOString()
+                });
+                saveUserData();
                 showNotification(`Intention set: ${intention}`);
                 hideCard('intention-card');
             } else {
                 showNotification('Please enter your intention');
             }
+        }
+
+        // Reflection functions
+        function showReflectionCard() {
+            hideCard('night-card');
+            showCard('reflection');
+            
+            const prompts = [
+                "What was the most meaningful part of your day?",
+                "What did you learn about yourself today?",
+                "How did you show kindness to yourself or others today?",
+                "What would you like to do differently tomorrow?",
+                "What are you proud of accomplishing today?"
+            ];
+            
+            const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+            document.getElementById('reflection-prompt').textContent = randomPrompt;
+        }
+
+        function saveReflection() {
+            const reflection = document.getElementById('reflection-entry').value;
+            if (reflection.trim()) {
+                state.userData.reflections.push({
+                    prompt: document.getElementById('reflection-prompt').textContent,
+                    reflection: reflection,
+                    timestamp: new Date().toISOString()
+                });
+                saveUserData();
+                showNotification('Reflection saved successfully');
+                hideCard('reflection-card');
+            } else {
+                showNotification('Please write your reflection');
+            }
+        }
+
+        // Wind down function
+        function setWindDown() {
+            hideCard('night-card');
+            showCard('windDown');
         }
 
         // Initialize when DOM is loaded
