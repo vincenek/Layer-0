@@ -7,12 +7,10 @@
 <meta name="theme-color" content="#0f0f15">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<!-- Icons (Base64): -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Layer0">
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkxheWVyMCBEZWNpc2lvbiBNYXBwZXIiLAogICJzaG9ydF9uYW1lIjogIkxheWVyMCIsCiAgImRlc2NyaXB0aW9uIjogIkEgZGVjaXNpb24gbWFwcGluZyBQV0EiLAogICJpY29ucyI6IFt7CiAgICAic3JjIjogImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBQUVBQUFJQ0FJSUFBQUFBT1pZQ0FBQUFBQVhOUUJBQUFBQ2tsRVFWUjRBZTJCa1lXeHNZVzUwYVdacFpYY0FBQUFBSlhSRldIUmtZWFJoTENCcGMzUmxZMmh2YjJ3QUFBQUJKUlU1RXJrSmdnZz09IiwKICAgICJ0eXBlIjogImltYWdlL3BuZyIsCiAgICAic2l6ZXMiOiAiMTkyeDE5MiIKICB9XSwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJ0aGVtZV9jb2xvciI6ICIjMGYwZjE1IiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMGYwZjE1Igp9">
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEvElEQVR4nO3Y0ZHbOBAEUPpCUv4xKCXfz6lOVkleUgSIAfq9ALbE">
-<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABWklEQVR4nO2bTbLDIAyD6TtS7n+GXKlvLVEZYLgOHeWDnSmpZGQpfOVRrKhJsGILcPS/c+BmLgAkGiQR7HbSKkZ1wGhgAuI0OEDGISINgFpYcYUREIGJkZ2yrv0XUTsaQeJbdqKdK+xq2Vi1uQjL9stHW6zvpHwvrFUwPYggvAyFbX/S5raDRhb2JSz42Q49do5IdrsBINyt+MBZoq4Eivd8yF6uLc1voEUhDV7u85XqQn45YWZuAQ61rOwXWPrUe74mH117nud96FMygScDQd9kCtn2nEhjicUpFMxVwVbQghGuYLqgQb0IvtYW0IO6rVG0h5vWCkVWOOaGsaLpZW8XVWQLg4yYQaRMGLx6txVu4+Vy2ID1sr/zH9d6TXU8gVCDOct61Q0+R5o24E6koUdZOgA8JYuQBqLUe3+l6N8+xA2nJqU9GeHa0J7LbSa2sFfblAUqZuh3YnfKhVAm+gkwAW5DyWUQDi+i1/rIQ6v0KJmwMcCldVKV6kVcEQ3QZtwip4CXcSND6n/rFO8/G9SfuVAB79ekbNeY+fMAAAAASUVORK5CYII=">
-<!-- Inline web manifest (data URI) -->
-<link rel="manifest" href='data:application/manifest+json,{"name":"Layer0 Decision Mapper","short_name":"Layer0","description":"A decision mapping PWA","icons":[{"src":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEvElEQVR4nO3Y0ZHbOBAEUPpCUv4xKCXfz6lOVkleUgSIAfq9ALbE","type":"image/png","sizes":"192x192"},{"src":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAPOUlEQVR4nO3cYXYbyQ2FUU6W5P2vwVua","type":"image/png","sizes":"512x512"}],"start_url":".","display":"standalone","theme_color":"#0f0f15","background_color":"#0f0f15"}'>
 <style>
 :root {
   --primary: #7e22ce;
@@ -33,7 +31,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
 body {
@@ -89,6 +87,7 @@ body {
   justify-content: center;
   font-size: 24px;
   font-weight: bold;
+  color: white;
 }
 
 .brand-text {
@@ -149,6 +148,7 @@ p {
   margin-bottom: 15px;
   font-size: 1.1rem;
   color: #d1d1d6;
+  text-align: center;
 }
 
 .btn {
@@ -463,9 +463,44 @@ textarea {
     width: 100%;
   }
 }
+
+.install-prompt {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  z-index: 1000;
+  display: none;
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.install-prompt button {
+  background: white;
+  color: var(--primary);
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
 </style>
 </head>
 <body>
+  <div class="install-prompt" id="installPrompt">
+    <p>Install Layer0 for full experience</p>
+    <button id="installButton">Add to Home Screen</button>
+  </div>
+  
   <div class="container">
     <div class="header">
       <div class="brand">
@@ -480,17 +515,17 @@ textarea {
     <!-- Step 0: Welcome -->
     <div id="step0" class="step active">
       <h1>Decision Intelligence Platform</h1>
-      <p class="text-center">Map your decisions, understand your thought process, and discover optimized cognitive pathways.</p>
+      <p>Map your decisions, understand your thought process, and discover optimized cognitive pathways.</p>
       
       <div class="btn-group">
-        <button id="beginBtn" class="btn"><i class="fas fa-play"></i> Begin Mapping</button>
+        <button id="beginBtn" class="btn">Begin Mapping</button>
       </div>
     </div>
     
     <!-- Step 1: Decision Input -->
     <div id="step1" class="step">
       <h2>Your Decision</h2>
-      <p>Describe a decision you recently made. Be specific about the context and outcome.</p>
+      <p>Describe a decision you recently made</p>
       
       <div class="input-group">
         <label for="decision">Decision Description</label>
@@ -498,15 +533,15 @@ textarea {
       </div>
       
       <div class="btn-group">
-        <button id="decision-btn" class="btn"><i class="fas fa-arrow-right"></i> Next</button>
-        <button class="btn btn-secondary" id="backToHome"><i class="fas fa-arrow-left"></i> Back</button>
+        <button id="decision-btn" class="btn">Next</button>
+        <button class="btn btn-secondary" id="backToHome">Back</button>
       </div>
     </div>
     
     <!-- Step 2: Why 1 -->
     <div id="step2" class="step">
       <h2>First Reflection</h2>
-      <p>Why did you make this decision? What was your primary motivation?</p>
+      <p>Why did you make this decision?</p>
       
       <div class="input-group">
         <label for="why1">Reason #1</label>
@@ -514,15 +549,15 @@ textarea {
       </div>
       
       <div class="btn-group">
-        <button id="why1-btn" class="btn"><i class="fas fa-arrow-right"></i> Next</button>
-        <button class="btn btn-secondary" id="backToDecision"><i class="fas fa-arrow-left"></i> Back</button>
+        <button id="why1-btn" class="btn">Next</button>
+        <button class="btn btn-secondary" id="backToDecision">Back</button>
       </div>
     </div>
     
     <!-- Step 3: Why 2 -->
     <div id="step3" class="step">
       <h2>Deeper Reflection</h2>
-      <p>Why did you have that motivation? What underlying factors influenced your decision?</p>
+      <p>Why did you have that motivation?</p>
       
       <div class="input-group">
         <label for="why2">Reason #2</label>
@@ -530,15 +565,15 @@ textarea {
       </div>
       
       <div class="btn-group">
-        <button id="why2-btn" class="btn"><i class="fas fa-arrow-right"></i> Next</button>
-        <button class="btn btn-secondary" id="backToWhy1"><i class="fas fa-arrow-left"></i> Back</button>
+        <button id="why2-btn" class="btn">Next</button>
+        <button class="btn btn-secondary" id="backToWhy1">Back</button>
       </div>
     </div>
     
     <!-- Step 4: Why 3 -->
     <div id="step4" class="step">
       <h2>Root Cause</h2>
-      <p>What is the fundamental reason behind that motivation? What core belief or value is driving this?</p>
+      <p>What is the fundamental reason behind that motivation?</p>
       
       <div class="input-group">
         <label for="why3">Reason #3</label>
@@ -546,8 +581,8 @@ textarea {
       </div>
       
       <div class="btn-group">
-        <button id="why3-btn" class="btn"><i class="fas fa-check"></i> Complete Reflection</button>
-        <button class="btn btn-secondary" id="backToWhy2"><i class="fas fa-arrow-left"></i> Back</button>
+        <button id="why3-btn" class="btn">Complete Reflection</button>
+        <button class="btn btn-secondary" id="backToWhy2">Back</button>
       </div>
     </div>
     
@@ -575,25 +610,25 @@ textarea {
       </div>
       
       <div class="btn-group">
-        <button id="save" class="btn btn-success"><i class="fas fa-save"></i> Save Session</button>
-        <button id="newSessionBtn" class="btn btn-secondary"><i class="fas fa-plus"></i> New Session</button>
-        <button id="historyBtn" class="btn"><i class="fas fa-history"></i> View History</button>
-        <button id="export" class="btn btn-warning"><i class="fas fa-share-alt"></i> Export</button>
+        <button id="save" class="btn">Save Session</button>
+        <button id="newSessionBtn" class="btn btn-secondary">New Session</button>
+        <button id="historyBtn" class="btn">View History</button>
+        <button id="export" class="btn">Export</button>
       </div>
     </div>
     
     <!-- Step 6: History -->
     <div id="step6" class="step">
       <h2>Session History</h2>
-      <p>Review your past decision mappings and cognitive optimizations.</p>
+      <p>Review your past decision mappings</p>
       
       <div id="historyList" class="history-grid">
         <!-- History items will be injected here -->
       </div>
       
       <div class="btn-group">
-        <button id="clearDataBtn" class="btn btn-secondary"><i class="fas fa-trash"></i> Clear All Data</button>
-        <button class="btn" id="backToHome2"><i class="fas fa-home"></i> Back to Home</button>
+        <button id="clearDataBtn" class="btn btn-secondary">Clear All Data</button>
+        <button class="btn" id="backToHome2">Back to Home</button>
       </div>
     </div>
   </div>
@@ -608,8 +643,8 @@ textarea {
   </div>
   
   <div class="footer">
-    <p>Layer 0 Decision Intelligence Platform &copy; 2023 | Proprietary Cognito Technology</p>
-    <p style="font-size: 0.8rem; margin-top: 10px;">All decision data remains private and is never shared with third parties</p>
+    <p>Layer 0 Decision Intelligence Platform &copy; 2023</p>
+    <p style="font-size: 0.8rem; margin-top: 10px;">Your data remains private</p>
   </div>
 
   <script>
@@ -646,12 +681,16 @@ textarea {
     const modalTitle = document.getElementById('modalTitle');
     const modalContent = document.getElementById('modalContent');
     const closeModal = document.querySelector('.close-modal');
+    const installPrompt = document.getElementById('installPrompt');
+    const installButton = document.getElementById('installButton');
+    let deferredPrompt;
     
     // Initialize
     function init() {
       showStep(0);
       setupEventListeners();
       renderHistory();
+      setupPWA();
     }
     
     // Set up event listeners
@@ -687,6 +726,7 @@ textarea {
       backToWhy1.addEventListener('click', () => showStep(2));
       backToWhy2.addEventListener('click', () => showStep(3));
       closeModal.addEventListener('click', () => sessionModal.classList.remove('active'));
+      installButton.addEventListener('click', installApp);
       
       // Close modal on outside click
       window.addEventListener('click', (e) => {
@@ -853,7 +893,7 @@ textarea {
         </div>
         
         <div style="text-align: center; margin-top: 30px;">
-          <button class="btn" onclick="document.getElementById('sessionModal').classList.remove('active')"><i class="fas fa-times"></i> Close</button>
+          <button class="btn" onclick="document.getElementById('sessionModal').classList.remove('active')">Close</button>
         </div>
       `;
       
@@ -907,56 +947,50 @@ textarea {
       showStep(0);
     }
     
+    // PWA Installation
+    function setupPWA() {
+      // Listen for beforeinstallprompt event
+      window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent the mini-infobar from appearing on mobile
+        e.preventDefault();
+        // Stash the event so it can be triggered later
+        deferredPrompt = e;
+        // Show install prompt
+        installPrompt.style.display = 'block';
+      });
+      
+      // Check if app is already installed
+      window.addEventListener('appinstalled', () => {
+        installPrompt.style.display = 'none';
+        deferredPrompt = null;
+      });
+      
+      // Check if running in standalone mode (already installed)
+      if (window.matchMedia('(display-mode: standalone)').matches || 
+          window.navigator.standalone) {
+        installPrompt.style.display = 'none';
+      }
+    }
+    
+    function installApp() {
+      if (deferredPrompt) {
+        // Show the install prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+          } else {
+            console.log('User dismissed the install prompt');
+          }
+          deferredPrompt = null;
+        });
+      }
+    }
+    
     // Initialize the app
     window.onload = init;
-    
-    // Simple XOR-based encryption/decryption
-    function encrypt(text, password) {
-      let enc = '';
-      for (let i = 0; i < text.length; i++) {
-        enc += String.fromCharCode(text.charCodeAt(i) ^ password.charCodeAt(i % password.length));
-      }
-      return btoa(enc);
-    }
-    
-    function decrypt(data, password) {
-      let str = atob(data);
-      let dec = '';
-      for (let i = 0; i < str.length; i++) {
-        dec += String.fromCharCode(str.charCodeAt(i) ^ password.charCodeAt(i % password.length));
-      }
-      return dec;
-    }
   })();
-  </script>
-  
-  <!-- Font Awesome Icons -->
-  <script>
-    // Inline Font Awesome for offline use
-    const faIcons = document.createElement('style');
-    faIcons.innerHTML = `
-    .fas {
-      -moz-osx-font-smoothing: grayscale;
-      -webkit-font-smoothing: antialiased;
-      display: inline-block;
-      font-style: normal;
-      font-variant: normal;
-      text-rendering: auto;
-      line-height: 1;
-    }
-    .fa-play:before { content: "\\f04b"; }
-    .fa-arrow-right:before { content: "\\f061"; }
-    .fa-arrow-left:before { content: "\\f060"; }
-    .fa-check:before { content: "\\f00c"; }
-    .fa-save:before { content: "\\f0c7"; }
-    .fa-plus:before { content: "\\f067"; }
-    .fa-history:before { content: "\\f1da"; }
-    .fa-share-alt:before { content: "\\f1e0"; }
-    .fa-trash:before { content: "\\f1f8"; }
-    .fa-home:before { content: "\\f015"; }
-    .fa-times:before { content: "\\f00d"; }
-    `;
-    document.head.appendChild(faIcons);
   </script>
 </body>
 </html>
