@@ -1,996 +1,1256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Layer 0 Decision Mapper</title>
-<meta name="theme-color" content="#0f0f15">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Layer0">
-<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkxheWVyMCBEZWNpc2lvbiBNYXBwZXIiLAogICJzaG9ydF9uYW1lIjogIkxheWVyMCIsCiAgImRlc2NyaXB0aW9uIjogIkEgZGVjaXNpb24gbWFwcGluZyBQV0EiLAogICJpY29ucyI6IFt7CiAgICAic3JjIjogImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBQUVBQUFJQ0FJSUFBQUFBT1pZQ0FBQUFBQVhOUUJBQUFBQ2tsRVFWUjRBZTJCa1lXeHNZVzUwYVdacFpYY0FBQUFBSlhSRldIUmtZWFJoTENCcGMzUmxZMmh2YjJ3QUFBQUJKUlU1RXJrSmdnZz09IiwKICAgICJ0eXBlIjogImltYWdlL3BuZyIsCiAgICAic2l6ZXMiOiAiMTkyeDE5MiIKICB9XSwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJ0aGVtZV9jb2xvciI6ICIjMGYwZjE1IiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMGYwZjE1Igp9">
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEvElEQVR4nO3Y0ZHbOBAEUPpCUv4xKCXfz6lOVkleUgSIAfq9ALbE">
-<style>
-:root {
-  --primary: #7e22ce;
-  --primary-dark: #5b21b6;
-  --primary-light: #a855f7;
-  --secondary: #06b6d4;
-  --accent: #ec4899;
-  --dark: #0f0f15;
-  --darker: #09090b;
-  --light: #f5f5f7;
-  --gray: #27272a;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-}
-
-body {
-  background: linear-gradient(135deg, var(--darker), var(--dark));
-  color: var(--light);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  position: relative;
-  overflow-x: hidden;
-  line-height: 1.6;
-}
-
-.container {
-  width: 100%;
-  max-width: 800px;
-  background: rgba(23, 23, 33, 0.85);
-  backdrop-filter: blur(12px);
-  border-radius: 24px;
-  padding: 30px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(126, 34, 206, 0.3);
-  position: relative;
-  overflow: hidden;
-  margin: 20px 0;
-  z-index: 1;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(126, 34, 206, 0.3);
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.logo {
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
-}
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.brand-name {
-  font-size: 28px;
-  font-weight: 800;
-  background: linear-gradient(to right, var(--primary-light), var(--secondary));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  line-height: 1.2;
-}
-
-.brand-tagline {
-  font-size: 14px;
-  color: var(--primary-light);
-  letter-spacing: 1px;
-}
-
-.step {
-  display: none;
-}
-
-.step.active {
-  display: block;
-  animation: fadeIn 0.5s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-h1 {
-  font-size: 2.5rem;
-  text-align: center;
-  margin-bottom: 20px;
-  background: linear-gradient(to right, var(--primary-light), var(--secondary));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  line-height: 1.2;
-  font-weight: 800;
-}
-
-h2 {
-  font-size: 1.8rem;
-  margin: 20px 0;
-  color: var(--primary-light);
-  font-weight: 700;
-}
-
-p {
-  margin-bottom: 15px;
-  font-size: 1.1rem;
-  color: #d1d1d6;
-  text-align: center;
-}
-
-.btn {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white;
-  border: none;
-  padding: 14px 28px;
-  border-radius: 14px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  box-shadow: 0 6px 20px rgba(126, 34, 206, 0.4);
-  position: relative;
-  overflow: hidden;
-  text-decoration: none;
-}
-
-.btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(126, 34, 206, 0.6);
-}
-
-.btn:active {
-  transform: translateY(1px);
-}
-
-.btn-secondary {
-  background: transparent;
-  border: 2px solid var(--primary);
-  color: var(--primary-light);
-  box-shadow: none;
-}
-
-.btn-group {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-  margin-top: 30px;
-  justify-content: center;
-}
-
-.input-group {
-  margin-bottom: 25px;
-}
-
-label {
-  display: block;
-  margin-bottom: 12px;
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: var(--primary-light);
-}
-
-input, textarea {
-  width: 100%;
-  padding: 16px;
-  border-radius: 14px;
-  border: 2px solid var(--gray);
-  background: rgba(50, 50, 60, 0.7);
-  color: var(--light);
-  font-size: 1.1rem;
-  transition: all 0.3s;
-}
-
-input:focus, textarea:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(126, 34, 206, 0.3);
-}
-
-textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.chain-container {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 30px;
-  margin: 30px 0;
-}
-
-.chain-box {
-  flex: 1;
-  min-width: 300px;
-  background: rgba(45, 45, 55, 0.7);
-  border-radius: 20px;
-  padding: 25px;
-  border: 1px solid rgba(126, 34, 206, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-.chain-box::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 6px;
-  height: 100%;
-  background: linear-gradient(to bottom, var(--primary), var(--secondary));
-}
-
-.chain-item {
-  padding: 18px;
-  margin: 18px 0;
-  border-radius: 14px;
-  background: rgba(55, 55, 65, 0.8);
-  border-left: 4px solid var(--primary-light);
-  animation: slideIn 0.4s ease-out;
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 15px;
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-.cognito-item {
-  background: rgba(30, 70, 50, 0.6);
-  border-left: 4px solid var(--success);
-}
-
-.score-container {
-  display: flex;
-  justify-content: center;
-  margin: 30px 0;
-}
-
-.score-circle {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: conic-gradient(var(--success) 0% 75%, var(--gray) 75% 100%);
-  position: relative;
-  box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
-}
-
-.score-value {
-  font-size: 3.5rem;
-  font-weight: 800;
-  color: white;
-}
-
-.score-label {
-  color: var(--light);
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.history-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 25px;
-  margin-top: 25px;
-}
-
-.history-card {
-  background: rgba(45, 45, 55, 0.7);
-  border-radius: 18px;
-  padding: 20px;
-  border: 1px solid rgba(126, 34, 206, 0.2);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-}
-
-.history-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(126, 34, 206, 0.3);
-  border-color: var(--primary);
-}
-
-.history-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 10px;
-  color: var(--primary-light);
-}
-
-.history-decision {
-  flex-grow: 1;
-  margin-bottom: 15px;
-  color: #d1d1d6;
-}
-
-.history-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: auto;
-}
-
-.history-tags {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.tag {
-  background: rgba(126, 34, 206, 0.2);
-  color: var(--primary-light);
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-}
-
-.timestamp {
-  font-size: 0.85rem;
-  color: #a1a1aa;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(15, 15, 21, 0.95);
-  z-index: 100;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal.active {
-  display: flex;
-}
-
-.modal-content {
-  background: var(--dark);
-  border-radius: 24px;
-  padding: 40px;
-  max-width: 800px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--primary);
-  position: relative;
-}
-
-.close-modal {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: none;
-  border: none;
-  color: var(--light);
-  font-size: 1.5rem;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-}
-
-.close-modal:hover {
-  background: rgba(126, 34, 206, 0.2);
-  transform: rotate(90deg);
-}
-
-.footer {
-  text-align: center;
-  padding: 30px 0 20px;
-  color: #a1a1aa;
-  font-size: 0.9rem;
-  width: 100%;
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding: 20px;
-  }
-  
-  h1 {
-    font-size: 2rem;
-  }
-  
-  h2 {
-    font-size: 1.5rem;
-  }
-  
-  .chain-container {
-    flex-direction: column;
-  }
-  
-  .btn-group {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .btn {
-    width: 100%;
-  }
-}
-
-.install-prompt {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: var(--primary);
-  color: white;
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  z-index: 1000;
-  display: none;
-  animation: slideUp 0.5s ease-out;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(100px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.install-prompt button {
-  background: white;
-  color: var(--primary);
-  border: none;
-  padding: 8px 15px;
-  border-radius: 8px;
-  margin-top: 10px;
-  cursor: pointer;
-  font-weight: bold;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layer 0 Decision Mapper</title>
+    <meta name="theme-color" content="#0f0f15">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Layer0">
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkxheWVyMCBEZWNpc2lvbiBNYXBwZXIiLAogICJzaG9ydF9uYW1lIjogIkxheWVyMCIsCiAgImRlc2NyaXB0aW9uIjogIkEgZGVjaXNpb24gbWFwcGluZyBQV0EiLAogICJpY29ucyI6IFt7CiAgICAic3JjIjogImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBQUVBQUFJQ0FJSUFBQUFBT1pZQ0FBQUFBQVhOUUJBQUFBQ2tsRVFWUjRBZTJCa1lXeHNZVzUwYVdacFpYY0FBQUFBSlhSRldIUmtZWFJoTENCcGMzUmxZMmh2YjJ3QUFBQUJKUlU1RXJrSmdnZz09IiwKICAgICJ0eXBlIjogImltYWdlL3BuZyIsCiAgICAic2l6ZXMiOiAiMTkyeDE5MiIKICB9XSwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJ0aGVtZV9jb2xvciI6ICIjMGYwZjE1IiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMGYwZjE1Igp9">
+    <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEvElEQVR4nO3Y0ZHbOBAEUPpCUv4xKCXfz6lOVkleUgSIAfq9ALbE">
+    <style>
+        :root {
+            --primary: #7e22ce;
+            --primary-dark: #5b21b6;
+            --primary-light: #a855f7;
+            --secondary: #06b6d4;
+            --accent: #ec4899;
+            --dark: #0f0f15;
+            --darker: #09090b;
+            --light: #f5f5f7;
+            --gray: #27272a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(23, 23, 33, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(126, 34, 206, 0.3);
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+            z-index: 1;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(126, 34, 206, 0.3);
+        }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .brand-name {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary-light), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+        
+        .brand-tagline {
+            font-size: 14px;
+            color: var(--primary-light);
+            letter-spacing: 1px;
+        }
+        
+        .step {
+            display: none;
+        }
+        
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--primary-light), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+            font-weight: 800;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            color: var(--primary-light);
+            font-weight: 700;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #d1d1d6;
+            text-align: center;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 20px rgba(126, 34, 206, 0.4);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(126, 34, 206, 0.6);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary-light);
+            box-shadow: none;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--primary-light);
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            border: 2px solid var(--gray);
+            background: rgba(50, 50, 60, 0.7);
+            color: var(--light);
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(126, 34, 206, 0.3);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .chain-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .chain-box {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(45, 45, 55, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(126, 34, 206, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chain-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+        
+        .chain-item {
+            padding: 18px;
+            margin: 18px 0;
+            border-radius: 14px;
+            background: rgba(55, 55, 65, 0.8);
+            border-left: 4px solid var(--primary-light);
+            animation: slideIn 0.4s ease-out;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .cognito-item {
+            background: rgba(30, 70, 50, 0.6);
+            border-left: 4px solid var(--success);
+        }
+        
+        .score-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: conic-gradient(var(--success) 0% 75%, var(--gray) 75% 100%);
+            position: relative;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+        }
+        
+        .score-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+        }
+        
+        .score-label {
+            color: var(--light);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+        
+        .history-card {
+            background: rgba(45, 45, 55, 0.7);
+            border-radius: 18px;
+            padding: 20px;
+            border: 1px solid rgba(126, 34, 206, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .history-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(126, 34, 206, 0.3);
+            border-color: var(--primary);
+        }
+        
+        .history-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-light);
+        }
+        
+        .history-decision {
+            flex-grow: 1;
+            margin-bottom: 15px;
+            color: #d1d1d6;
+        }
+        
+        .history-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        
+        .history-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            background: rgba(126, 34, 206, 0.2);
+            color: var(--primary-light);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .timestamp {
+            font-size: 0.85rem;
+            color: #a1a1aa;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 15, 21, 0.95);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--dark);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary);
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .close-modal:hover {
+            background: rgba(126, 34, 206, 0.2);
+            transform: rotate(90deg);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px 0 20px;
+            color: #a1a1aa;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .chain-container {
+                flex-direction: column;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+        
+        /* PWA Install Button */
+        .pwa-install-container {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .pwa-install-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--success);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            border: none;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+            
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+        
+        .pwa-install-btn:hover {
+            background: #0da271;
+            transform: scale(1.05);
+        }
+        
+        /* Install Prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            transform: translateY(150%);
+            transition: transform 0.5s ease;
+        }
+        
+        .install-prompt.show {
+            transform: translateY(0);
+        }
+        
+        .install-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+        
+        .install-text {
+            flex: 1;
+        }
+        
+        .install-close {
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            color: var(--gray);
+            cursor: pointer;
+        }
+        
+        /* Offline Indicator */
+        .offline-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--warning);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        
+        .offline-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-size: 0.9rem;
+            max-width: 90%;
+            text-align: center;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
-  <div class="install-prompt" id="installPrompt">
-    <p>Install Layer0 for full experience</p>
-    <button id="installButton">Add to Home Screen</button>
-  </div>
-  
-  <div class="container">
-    <div class="header">
-      <div class="brand">
-        <div class="logo">L0</div>
-        <div class="brand-text">
-          <div class="brand-name">Layer 0</div>
-          <div class="brand-tagline">DECISION MAPPER</div>
+    <!-- PWA Install Button -->
+    <div class="pwa-install-container" id="pwaInstallContainer">
+        <button class="pwa-install-btn" id="pwaInstallBtn">
+            <i class="fas fa-download"></i>
+        </button>
+    </div>
+    
+    <!-- Install Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-icon">
+            <i class="fas fa-download"></i>
         </div>
-      </div>
-    </div>
-    
-    <!-- Step 0: Welcome -->
-    <div id="step0" class="step active">
-      <h1>Decision Intelligence Platform</h1>
-      <p>Map your decisions, understand your thought process, and discover optimized cognitive pathways.</p>
-      
-      <div class="btn-group">
-        <button id="beginBtn" class="btn">Begin Mapping</button>
-      </div>
-    </div>
-    
-    <!-- Step 1: Decision Input -->
-    <div id="step1" class="step">
-      <h2>Your Decision</h2>
-      <p>Describe a decision you recently made</p>
-      
-      <div class="input-group">
-        <label for="decision">Decision Description</label>
-        <textarea id="decision" placeholder="Example: I decided to skip my workout yesterday to finish a work project"></textarea>
-      </div>
-      
-      <div class="btn-group">
-        <button id="decision-btn" class="btn">Next</button>
-        <button class="btn btn-secondary" id="backToHome">Back</button>
-      </div>
-    </div>
-    
-    <!-- Step 2: Why 1 -->
-    <div id="step2" class="step">
-      <h2>First Reflection</h2>
-      <p>Why did you make this decision?</p>
-      
-      <div class="input-group">
-        <label for="why1">Reason #1</label>
-        <textarea id="why1" placeholder="Describe your reasoning..."></textarea>
-      </div>
-      
-      <div class="btn-group">
-        <button id="why1-btn" class="btn">Next</button>
-        <button class="btn btn-secondary" id="backToDecision">Back</button>
-      </div>
-    </div>
-    
-    <!-- Step 3: Why 2 -->
-    <div id="step3" class="step">
-      <h2>Deeper Reflection</h2>
-      <p>Why did you have that motivation?</p>
-      
-      <div class="input-group">
-        <label for="why2">Reason #2</label>
-        <textarea id="why2" placeholder="Describe your reasoning..."></textarea>
-      </div>
-      
-      <div class="btn-group">
-        <button id="why2-btn" class="btn">Next</button>
-        <button class="btn btn-secondary" id="backToWhy1">Back</button>
-      </div>
-    </div>
-    
-    <!-- Step 4: Why 3 -->
-    <div id="step4" class="step">
-      <h2>Root Cause</h2>
-      <p>What is the fundamental reason behind that motivation?</p>
-      
-      <div class="input-group">
-        <label for="why3">Reason #3</label>
-        <textarea id="why3" placeholder="Describe your reasoning..."></textarea>
-      </div>
-      
-      <div class="btn-group">
-        <button id="why3-btn" class="btn">Complete Reflection</button>
-        <button class="btn btn-secondary" id="backToWhy2">Back</button>
-      </div>
-    </div>
-    
-    <!-- Step 5: Results -->
-    <div id="step5" class="step">
-      <h2>Decision Analysis</h2>
-      
-      <div class="score-container">
-        <div class="score-circle">
-          <div class="score-value">82</div>
-          <div class="score-label">Cognito Score</div>
+        <div class="install-text">
+            <strong>Install Layer 0</strong>
+            <p>Add to home screen for quick access</p>
         </div>
-      </div>
-      
-      <div class="chain-container">
-        <div class="chain-box">
-          <h3>Your Thought Process</h3>
-          <div id="userChain"></div>
+        <button class="install-close" id="closePrompt">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <!-- Offline Indicator -->
+    <div class="offline-indicator" id="offlineIndicator">
+        <i class="fas fa-wifi-slash"></i>
+        <span>You are currently offline</span>
+    </div>
+    
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="brand">
+                <div class="logo">L0</div>
+                <div class="brand-text">
+                    <div class="brand-name">Layer 0</div>
+                    <div class="brand-tagline">DECISION MAPPER</div>
+                </div>
+            </div>
         </div>
         
-        <div class="chain-box">
-          <h3>Optimized Cognito Path</h3>
-          <div id="cognitoPath"></div>
+        <!-- Step 0: Welcome -->
+        <div id="step0" class="step active">
+            <h1>Decision Intelligence Platform</h1>
+            <p>Map your decisions, understand your thought process, and discover optimized cognitive pathways.</p>
+            
+            <div class="btn-group">
+                <button id="beginBtn" class="btn">Begin Mapping</button>
+            </div>
         </div>
-      </div>
-      
-      <div class="btn-group">
-        <button id="save" class="btn">Save Session</button>
-        <button id="newSessionBtn" class="btn btn-secondary">New Session</button>
-        <button id="historyBtn" class="btn">View History</button>
-        <button id="export" class="btn">Export</button>
-      </div>
+        
+        <!-- Step 1: Decision Input -->
+        <div id="step1" class="step">
+            <h2>Your Decision</h2>
+            <p>Describe a decision you recently made</p>
+            
+            <div class="input-group">
+                <label for="decision">Decision Description</label>
+                <textarea id="decision" placeholder="Example: I decided to skip my workout yesterday to finish a work project"></textarea>
+            </div>
+            
+            <div class="btn-group">
+                <button id="decision-btn" class="btn">Next</button>
+                <button class="btn btn-secondary" id="backToHome">Back</button>
+            </div>
+        </div>
+        
+        <!-- Step 2: Why 1 -->
+        <div id="step2" class="step">
+            <h2>First Reflection</h2>
+            <p>Why did you make this decision?</p>
+            
+            <div class="input-group">
+                <label for="why1">Reason #1</label>
+                <textarea id="why1" placeholder="Describe your reasoning..."></textarea>
+            </div>
+            
+            <div class="btn-group">
+                <button id="why1-btn" class="btn">Next</button>
+                <button class="btn btn-secondary" id="backToDecision">Back</button>
+            </div>
+        </div>
+        
+        <!-- Step 3: Why 2 -->
+        <div id="step3" class="step">
+            <h2>Deeper Reflection</h2>
+            <p>Why did you have that motivation?</p>
+            
+            <div class="input-group">
+                <label for="why2">Reason #2</label>
+                <textarea id="why2" placeholder="Describe your reasoning..."></textarea>
+            </div>
+            
+            <div class="btn-group">
+                <button id="why2-btn" class="btn">Next</button>
+                <button class="btn btn-secondary" id="backToWhy1">Back</button>
+            </div>
+        </div>
+        
+        <!-- Step 4: Why 3 -->
+        <div id="step4" class="step">
+            <h2>Root Cause</h2>
+            <p>What is the fundamental reason behind that motivation?</p>
+            
+            <div class="input-group">
+                <label for="why3">Reason #3</label>
+                <textarea id="why3" placeholder="Describe your reasoning..."></textarea>
+            </div>
+            
+            <div class="btn-group">
+                <button id="why3-btn" class="btn">Complete Reflection</button>
+                <button class="btn btn-secondary" id="backToWhy2">Back</button>
+            </div>
+        </div>
+        
+        <!-- Step 5: Results -->
+        <div id="step5" class="step">
+            <h2>Decision Analysis</h2>
+            
+            <div class="score-container">
+                <div class="score-circle">
+                    <div class="score-value">82</div>
+                    <div class="score-label">Cognito Score</div>
+                </div>
+            </div>
+            
+            <div class="chain-container">
+                <div class="chain-box">
+                    <h3>Your Thought Process</h3>
+                    <div id="userChain"></div>
+                </div>
+                
+                <div class="chain-box">
+                    <h3>Optimized Cognito Path</h3>
+                    <div id="cognitoPath"></div>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button id="save" class="btn">Save Session</button>
+                <button id="newSessionBtn" class="btn btn-secondary">New Session</button>
+                <button id="historyBtn" class="btn">View History</button>
+                <button id="export" class="btn">Export</button>
+            </div>
+        </div>
+        
+        <!-- Step 6: History -->
+        <div id="step6" class="step">
+            <h2>Session History</h2>
+            <p>Review your past decision mappings</p>
+            
+            <div id="historyList" class="history-grid">
+                <!-- History items will be injected here -->
+            </div>
+            
+            <div class="btn-group">
+                <button id="clearDataBtn" class="btn btn-secondary">Clear All Data</button>
+                <button class="btn" id="backToHome2">Back to Home</button>
+            </div>
+        </div>
     </div>
     
-    <!-- Step 6: History -->
-    <div id="step6" class="step">
-      <h2>Session History</h2>
-      <p>Review your past decision mappings</p>
-      
-      <div id="historyList" class="history-grid">
-        <!-- History items will be injected here -->
-      </div>
-      
-      <div class="btn-group">
-        <button id="clearDataBtn" class="btn btn-secondary">Clear All Data</button>
-        <button class="btn" id="backToHome2">Back to Home</button>
-      </div>
+    <!-- Session Detail Modal -->
+    <div id="sessionModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2 id="modalTitle">Session Detail</h2>
+            <div id="modalContent"></div>
+        </div>
     </div>
-  </div>
-  
-  <!-- Session Detail Modal -->
-  <div id="sessionModal" class="modal">
-    <div class="modal-content">
-      <button class="close-modal">&times;</button>
-      <h2 id="modalTitle">Session Detail</h2>
-      <div id="modalContent"></div>
+    
+    <div class="footer">
+        <p>Layer 0 Decision Intelligence Platform &copy; 2023</p>
+        <p style="font-size: 0.8rem; margin-top: 10px;">Your data remains private</p>
     </div>
-  </div>
-  
-  <div class="footer">
-    <p>Layer 0 Decision Intelligence Platform &copy; 2023</p>
-    <p style="font-size: 0.8rem; margin-top: 10px;">Your data remains private</p>
-  </div>
 
-  <script>
-  (function() {
-    // State management
-    const state = {
-      currentStep: 0,
-      decision: '',
-      why1: '',
-      why2: '',
-      why3: '',
-      cognitoScore: 0,
-      sessions: JSON.parse(localStorage.getItem('layer0_sessions')) || []
-    };
-    
-    // DOM Elements
-    const steps = document.querySelectorAll('.step');
-    const beginBtn = document.getElementById('beginBtn');
-    const decisionBtn = document.getElementById('decision-btn');
-    const why1Btn = document.getElementById('why1-btn');
-    const why2Btn = document.getElementById('why2-btn');
-    const why3Btn = document.getElementById('why3-btn');
-    const saveBtn = document.getElementById('save');
-    const newSessionBtn = document.getElementById('newSessionBtn');
-    const historyBtn = document.getElementById('historyBtn');
-    const exportBtn = document.getElementById('export');
-    const clearDataBtn = document.getElementById('clearDataBtn');
-    const backToHome = document.getElementById('backToHome');
-    const backToHome2 = document.getElementById('backToHome2');
-    const backToDecision = document.getElementById('backToDecision');
-    const backToWhy1 = document.getElementById('backToWhy1');
-    const backToWhy2 = document.getElementById('backToWhy2');
-    const sessionModal = document.getElementById('sessionModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalContent = document.getElementById('modalContent');
-    const closeModal = document.querySelector('.close-modal');
-    const installPrompt = document.getElementById('installPrompt');
-    const installButton = document.getElementById('installButton');
-    let deferredPrompt;
-    
-    // Initialize
-    function init() {
-      showStep(0);
-      setupEventListeners();
-      renderHistory();
-      setupPWA();
-    }
-    
-    // Set up event listeners
-    function setupEventListeners() {
-      beginBtn.addEventListener('click', () => showStep(1));
-      decisionBtn.addEventListener('click', () => {
-        state.decision = document.getElementById('decision').value.trim();
-        if (state.decision) showStep(2);
-      });
-      why1Btn.addEventListener('click', () => {
-        state.why1 = document.getElementById('why1').value.trim();
-        if (state.why1) showStep(3);
-      });
-      why2Btn.addEventListener('click', () => {
-        state.why2 = document.getElementById('why2').value.trim();
-        if (state.why2) showStep(4);
-      });
-      why3Btn.addEventListener('click', () => {
-        state.why3 = document.getElementById('why3').value.trim();
-        if (state.why3) {
-          generateCognitoPath();
-          showStep(5);
-        }
-      });
-      saveBtn.addEventListener('click', saveSession);
-      newSessionBtn.addEventListener('click', startNewSession);
-      historyBtn.addEventListener('click', () => showStep(6));
-      exportBtn.addEventListener('click', exportSession);
-      clearDataBtn.addEventListener('click', clearData);
-      backToHome.addEventListener('click', () => showStep(0));
-      backToHome2.addEventListener('click', () => showStep(0));
-      backToDecision.addEventListener('click', () => showStep(1));
-      backToWhy1.addEventListener('click', () => showStep(2));
-      backToWhy2.addEventListener('click', () => showStep(3));
-      closeModal.addEventListener('click', () => sessionModal.classList.remove('active'));
-      installButton.addEventListener('click', installApp);
-      
-      // Close modal on outside click
-      window.addEventListener('click', (e) => {
-        if (e.target === sessionModal) {
-          sessionModal.classList.remove('active');
-        }
-      });
-    }
-    
-    // Navigation
-    function showStep(stepIndex) {
-      state.currentStep = stepIndex;
-      steps.forEach((step, index) => {
-        step.classList.toggle('active', index === stepIndex);
-      });
-      
-      if (stepIndex === 6) {
-        renderHistory();
-      }
-    }
-    
-    // Generate optimized cognito path
-    function generateCognitoPath() {
-      // Calculate Cognito Score
-      state.cognitoScore = 70 + Math.floor(Math.random() * 26);
-      document.querySelector('.score-value').textContent = state.cognitoScore;
-      
-      // Render results
-      renderResults();
-    }
-    
-    // Render results
-    function renderResults() {
-      const userChain = document.getElementById('userChain');
-      const cognitoPath = document.getElementById('cognitoPath');
-      
-      userChain.innerHTML = '';
-      cognitoPath.innerHTML = '';
-      
-      // Add decision as the first item
-      const decisionItem = document.createElement('div');
-      decisionItem.className = 'chain-item';
-      decisionItem.innerHTML = `<div>${state.decision}</div>`;
-      userChain.appendChild(decisionItem);
-      
-      // Add why chain items
-      const reasons = [state.why1, state.why2, state.why3];
-      reasons.forEach((reason, index) => {
-        const item = document.createElement('div');
-        item.className = 'chain-item';
-        item.innerHTML = `<div>${reason}</div>`;
-        userChain.appendChild(item);
+    <script>
+    (function() {
+        // State management
+        const state = {
+            currentStep: 0,
+            decision: '',
+            why1: '',
+            why2: '',
+            why3: '',
+            cognitoScore: 0,
+            sessions: JSON.parse(localStorage.getItem('layer0_sessions')) || []
+        };
         
-        const cognitoItem = document.createElement('div');
-        cognitoItem.className = 'chain-item cognito-item';
+        // DOM Elements
+        const steps = document.querySelectorAll('.step');
+        const beginBtn = document.getElementById('beginBtn');
+        const decisionBtn = document.getElementById('decision-btn');
+        const why1Btn = document.getElementById('why1-btn');
+        const why2Btn = document.getElementById('why2-btn');
+        const why3Btn = document.getElementById('why3-btn');
+        const saveBtn = document.getElementById('save');
+        const newSessionBtn = document.getElementById('newSessionBtn');
+        const historyBtn = document.getElementById('historyBtn');
+        const exportBtn = document.getElementById('export');
+        const clearDataBtn = document.getElementById('clearDataBtn');
+        const backToHome = document.getElementById('backToHome');
+        const backToHome2 = document.getElementById('backToHome2');
+        const backToDecision = document.getElementById('backToDecision');
+        const backToWhy1 = document.getElementById('backToWhy1');
+        const backToWhy2 = document.getElementById('backToWhy2');
+        const sessionModal = document.getElementById('sessionModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        const closeModal = document.querySelector('.close-modal');
+        const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+        const pwaInstallContainer = document.getElementById('pwaInstallContainer');
+        const installPrompt = document.getElementById('installPrompt');
+        const closePrompt = document.getElementById('closePrompt');
+        const offlineIndicator = document.getElementById('offlineIndicator');
+        const toast = document.getElementById('toast');
+        let deferredPrompt;
         
-        // Create optimized suggestions
-        let optimized;
-        if (index === 0) {
-          optimized = `Instead of "${reason}", consider establishing clear priorities and boundaries`;
-        } else if (index === 1) {
-          optimized = `Address the root cause "${reason}" through proactive planning`;
-        } else {
-          optimized = `Transform "${reason}" into an opportunity for growth`;
+        // Initialize
+        function init() {
+            showStep(0);
+            setupEventListeners();
+            renderHistory();
+            setupPWA();
         }
         
-        cognitoItem.innerHTML = `<div>${optimized}</div>`;
-        cognitoPath.appendChild(cognitoItem);
-      });
-    }
-    
-    // Save session to localStorage
-    function saveSession() {
-      const session = {
-        id: Date.now(),
-        decision: state.decision,
-        why1: state.why1,
-        why2: state.why2,
-        why3: state.why3,
-        cognitoScore: state.cognitoScore,
-        timestamp: new Date().toLocaleString()
-      };
-      
-      state.sessions.unshift(session);
-      localStorage.setItem('layer0_sessions', JSON.stringify(state.sessions));
-      
-      alert(`Session saved successfully with Cognito Score: ${session.cognitoScore}`);
-    }
-    
-    // Render history list
-    function renderHistory() {
-      const historyList = document.getElementById('historyList');
-      historyList.innerHTML = '';
-      
-      if (state.sessions.length === 0) {
-        historyList.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; padding: 40px;">No sessions found. Start a new mapping session!</p>';
-        return;
-      }
-      
-      state.sessions.forEach(session => {
-        const item = document.createElement('div');
-        item.className = 'history-card';
-        item.innerHTML = `
-          <div class="history-title">${session.decision.substring(0, 60)}${session.decision.length > 60 ? '...' : ''}</div>
-          <div class="history-footer">
-            <div class="history-tags">
-              <div class="tag">Score: ${session.cognitoScore}</div>
-            </div>
-            <div class="timestamp">${session.timestamp}</div>
-          </div>
-        `;
+        // Set up event listeners
+        function setupEventListeners() {
+            beginBtn.addEventListener('click', () => showStep(1));
+            decisionBtn.addEventListener('click', () => {
+                state.decision = document.getElementById('decision').value.trim();
+                if (state.decision) showStep(2);
+            });
+            why1Btn.addEventListener('click', () => {
+                state.why1 = document.getElementById('why1').value.trim();
+                if (state.why1) showStep(3);
+            });
+            why2Btn.addEventListener('click', () => {
+                state.why2 = document.getElementById('why2').value.trim();
+                if (state.why2) showStep(4);
+            });
+            why3Btn.addEventListener('click', () => {
+                state.why3 = document.getElementById('why3').value.trim();
+                if (state.why3) {
+                    generateCognitoPath();
+                    showStep(5);
+                }
+            });
+            saveBtn.addEventListener('click', saveSession);
+            newSessionBtn.addEventListener('click', startNewSession);
+            historyBtn.addEventListener('click', () => showStep(6));
+            exportBtn.addEventListener('click', exportSession);
+            clearDataBtn.addEventListener('click', clearData);
+            backToHome.addEventListener('click', () => showStep(0));
+            backToHome2.addEventListener('click', () => showStep(0));
+            backToDecision.addEventListener('click', () => showStep(1));
+            backToWhy1.addEventListener('click', () => showStep(2));
+            backToWhy2.addEventListener('click', () => showStep(3));
+            closeModal.addEventListener('click', () => sessionModal.classList.remove('active'));
+            pwaInstallBtn.addEventListener('click', installApp);
+            closePrompt.addEventListener('click', () => installPrompt.classList.remove('show'));
+            
+            // Close modal on outside click
+            window.addEventListener('click', (e) => {
+                if (e.target === sessionModal) {
+                    sessionModal.classList.remove('active');
+                }
+            });
+        }
         
-        item.addEventListener('click', () => {
-          showSessionDetail(session);
-        });
+        // Navigation
+        function showStep(stepIndex) {
+            state.currentStep = stepIndex;
+            steps.forEach((step, index) => {
+                step.classList.toggle('active', index === stepIndex);
+            });
+            
+            if (stepIndex === 6) {
+                renderHistory();
+            }
+        }
         
-        historyList.appendChild(item);
-      });
-    }
-    
-    // Show session detail modal
-    function showSessionDetail(session) {
-      modalTitle.textContent = session.decision.substring(0, 40) + (session.decision.length > 40 ? '...' : '');
-      
-      modalContent.innerHTML = `
-        <div style="margin-bottom: 30px;">
-          <h3>Original Decision</h3>
-          <p>${session.decision}</p>
-        </div>
+        // Generate optimized cognito path
+        function generateCognitoPath() {
+            // Calculate Cognito Score
+            state.cognitoScore = 70 + Math.floor(Math.random() * 26);
+            document.querySelector('.score-value').textContent = state.cognitoScore;
+            
+            // Render results
+            renderResults();
+        }
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
-          <div>
-            <h3>Thought Process</h3>
-            <div style="margin-top: 15px;">
-              <div class="chain-item" style="margin-bottom: 15px;">
-                <div>${session.decision}</div>
-              </div>
-              <div class="chain-item" style="margin-bottom: 15px;">
-                <div>${session.why1}</div>
-              </div>
-              <div class="chain-item" style="margin-bottom: 15px;">
-                <div>${session.why2}</div>
-              </div>
-              <div class="chain-item" style="margin-bottom: 15px;">
-                <div>${session.why3}</div>
-              </div>
-            </div>
-          </div>
-          
-          <div>
-            <h3>Optimized Path</h3>
-            <div style="margin-top: 15px;">
-              <div class="chain-item cognito-item" style="margin-bottom: 15px;">
-                <div>Instead of "${session.why1}", consider establishing clear priorities</div>
-              </div>
-              <div class="chain-item cognito-item" style="margin-bottom: 15px;">
-                <div>Address the root cause "${session.why2}" through planning</div>
-              </div>
-              <div class="chain-item cognito-item" style="margin-bottom: 15px;">
-                <div>Transform "${session.why3}" into growth opportunity</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        // Render results
+        function renderResults() {
+            const userChain = document.getElementById('userChain');
+            const cognitoPath = document.getElementById('cognitoPath');
+            
+            userChain.innerHTML = '';
+            cognitoPath.innerHTML = '';
+            
+            // Add decision as the first item
+            const decisionItem = document.createElement('div');
+            decisionItem.className = 'chain-item';
+            decisionItem.innerHTML = `<div>${state.decision}</div>`;
+            userChain.appendChild(decisionItem);
+            
+            // Add why chain items
+            const reasons = [state.why1, state.why2, state.why3];
+            reasons.forEach((reason, index) => {
+                const item = document.createElement('div');
+                item.className = 'chain-item';
+                item.innerHTML = `<div>${reason}</div>`;
+                userChain.appendChild(item);
+                
+                const cognitoItem = document.createElement('div');
+                cognitoItem.className = 'chain-item cognito-item';
+                
+                // Create optimized suggestions
+                let optimized;
+                if (index === 0) {
+                    optimized = `Instead of "${reason}", consider establishing clear priorities and boundaries`;
+                } else if (index === 1) {
+                    optimized = `Address the root cause "${reason}" through proactive planning`;
+                } else {
+                    optimized = `Transform "${reason}" into an opportunity for growth`;
+                }
+                
+                cognitoItem.innerHTML = `<div>${optimized}</div>`;
+                cognitoPath.appendChild(cognitoItem);
+            });
+        }
         
-        <div style="text-align: center; margin-top: 30px;">
-          <button class="btn" onclick="document.getElementById('sessionModal').classList.remove('active')">Close</button>
-        </div>
-      `;
-      
-      sessionModal.classList.add('active');
-    }
-    
-    // Export current session as JSON file
-    function exportSession() {
-      const data = {
-        decision: state.decision,
-        why1: state.why1,
-        why2: state.why2,
-        why3: state.why3,
-        cognitoScore: state.cognitoScore,
-        timestamp: new Date().toISOString()
-      };
-      
-      const json = JSON.stringify(data, null, 2);
-      const blob = new Blob([json], {type: 'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'layer0-session.json';
-      a.click();
-    }
-    
-    // Clear all data
-    function clearData() {
-      if (confirm('Are you sure you want to delete all session data? This cannot be undone.')) {
-        localStorage.removeItem('layer0_sessions');
-        state.sessions = [];
-        renderHistory();
-      }
-    }
-    
-    // Start a new session
-    function startNewSession() {
-      // Reset state
-      state.decision = '';
-      state.why1 = '';
-      state.why2 = '';
-      state.why3 = '';
-      state.cognitoScore = 0;
-      
-      // Reset inputs
-      document.getElementById('decision').value = '';
-      document.getElementById('why1').value = '';
-      document.getElementById('why2').value = '';
-      document.getElementById('why3').value = '';
-      
-      showStep(0);
-    }
-    
-    // PWA Installation
-    function setupPWA() {
-      // Listen for beforeinstallprompt event
-      window.addEventListener('beforeinstallprompt', (e) => {
-        // Prevent the mini-infobar from appearing on mobile
-        e.preventDefault();
-        // Stash the event so it can be triggered later
-        deferredPrompt = e;
-        // Show install prompt
-        installPrompt.style.display = 'block';
-      });
-      
-      // Check if app is already installed
-      window.addEventListener('appinstalled', () => {
-        installPrompt.style.display = 'none';
-        deferredPrompt = null;
-      });
-      
-      // Check if running in standalone mode (already installed)
-      if (window.matchMedia('(display-mode: standalone)').matches || 
-          window.navigator.standalone) {
-        installPrompt.style.display = 'none';
-      }
-    }
-    
-    function installApp() {
-      if (deferredPrompt) {
-        // Show the install prompt
-        deferredPrompt.prompt();
-        // Wait for the user to respond to the prompt
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('User accepted the install prompt');
-          } else {
-            console.log('User dismissed the install prompt');
-          }
-          deferredPrompt = null;
-        });
-      }
-    }
-    
-    // Initialize the app
-    window.onload = init;
-  })();
-  </script>
+        // Save session to localStorage
+        function saveSession() {
+            const session = {
+                id: Date.now(),
+                decision: state.decision,
+                why1: state.why1,
+                why2: state.why2,
+                why3: state.why3,
+                cognitoScore: state.cognitoScore,
+                timestamp: new Date().toLocaleString()
+            };
+            
+            state.sessions.unshift(session);
+            localStorage.setItem('layer0_sessions', JSON.stringify(state.sessions));
+            
+            showToast('Session saved successfully!');
+        }
+        
+        // Render history list
+        function renderHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            if (state.sessions.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; padding: 40px;">No sessions found. Start a new mapping session!</p>';
+                return;
+            }
+            
+            state.sessions.forEach(session => {
+                const item = document.createElement('div');
+                item.className = 'history-card';
+                item.innerHTML = `
+                    <div class="history-title">${session.decision.substring(0, 60)}${session.decision.length > 60 ? '...' : ''}</div>
+                    <div class="history-footer">
+                        <div class="history-tags">
+                            <div class="tag">Score: ${session.cognitoScore}</div>
+                        </div>
+                        <div class="timestamp">${session.timestamp}</div>
+                    </div>
+                `;
+                
+                item.addEventListener('click', () => {
+                    showSessionDetail(session);
+                });
+                
+                historyList.appendChild(item);
+            });
+        }
+        
+        // Show session detail modal
+        function showSessionDetail(session) {
+            modalTitle.textContent = session.decision.substring(0, 40) + (session.decision.length > 40 ? '...' : '');
+            
+            modalContent.innerHTML = `
+                <div style="margin-bottom: 30px;">
+                    <h3>Original Decision</h3>
+                    <p>${session.decision}</p>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                    <div>
+                        <h3>Thought Process</h3>
+                        <div style="margin-top: 15px;">
+                            <div class="chain-item" style="margin-bottom: 15px;">
+                                <div>${session.decision}</div>
+                            </div>
+                            <div class="chain-item" style="margin-bottom: 15px;">
+                                <div>${session.why1}</div>
+                            </div>
+                            <div class="chain-item" style="margin-bottom: 15px;">
+                                <div>${session.why2}</div>
+                            </div>
+                            <div class="chain-item" style="margin-bottom: 15px;">
+                                <div>${session.why3}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3>Optimized Path</h3>
+                        <div style="margin-top: 15px;">
+                            <div class="chain-item cognito-item" style="margin-bottom: 15px;">
+                                <div>Instead of "${session.why1}", consider establishing clear priorities</div>
+                            </div>
+                            <div class="chain-item cognito-item" style="margin-bottom: 15px;">
+                                <div>Address the root cause "${session.why2}" through planning</div>
+                            </div>
+                            <div class="chain-item cognito-item" style="margin-bottom: 15px;">
+                                <div>Transform "${session.why3}" into growth opportunity</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn" onclick="document.getElementById('sessionModal').classList.remove('active')">Close</button>
+                </div>
+            `;
+            
+            sessionModal.classList.add('active');
+        }
+        
+        // Export current session as JSON file
+        function exportSession() {
+            const data = {
+                decision: state.decision,
+                why1: state.why1,
+                why2: state.why2,
+                why3: state.why3,
+                cognitoScore: state.cognitoScore,
+                timestamp: new Date().toISOString()
+            };
+            
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'layer0-session.json';
+            a.click();
+        }
+        
+        // Clear all data
+        function clearData() {
+            if (confirm('Are you sure you want to delete all session data? This cannot be undone.')) {
+                localStorage.removeItem('layer0_sessions');
+                state.sessions = [];
+                renderHistory();
+            }
+        }
+        
+        // Start a new session
+        function startNewSession() {
+            // Reset state
+            state.decision = '';
+            state.why1 = '';
+            state.why2 = '';
+            state.why3 = '';
+            state.cognitoScore = 0;
+            
+            // Reset inputs
+            document.getElementById('decision').value = '';
+            document.getElementById('why1').value = '';
+            document.getElementById('why2').value = '';
+            document.getElementById('why3').value = '';
+            
+            showStep(0);
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // PWA Installation
+        function setupPWA() {
+            // Listen for beforeinstallprompt event
+            window.addEventListener('beforeinstallprompt', (e) => {
+                // Prevent the mini-infobar from appearing on mobile
+                e.preventDefault();
+                // Stash the event so it can be triggered later
+                deferredPrompt = e;
+                // Show the install button
+                pwaInstallContainer.style.display = 'block';
+                
+                // Also show the install prompt after 5 seconds
+                setTimeout(() => {
+                    if (deferredPrompt) {
+                        installPrompt.classList.add('show');
+                    }
+                }, 5000);
+            });
+            
+            // Listen for app installed event
+            window.addEventListener('appinstalled', () => {
+                // Hide the install button
+                pwaInstallContainer.style.display = 'none';
+                // Clear the deferredPrompt variable
+                deferredPrompt = null;
+                // Hide the prompt
+                installPrompt.classList.remove('show');
+                // Show success message
+                showToast('App installed successfully!');
+            });
+            
+            // Offline detection
+            window.addEventListener('offline', () => {
+                offlineIndicator.classList.add('show');
+            });
+            
+            window.addEventListener('online', () => {
+                offlineIndicator.classList.remove('show');
+            });
+            
+            // Initialize offline status
+            if (!navigator.onLine) {
+                offlineIndicator.classList.add('show');
+            }
+        }
+        
+        function installApp() {
+            if (deferredPrompt) {
+                // Show the install prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    } else {
+                        console.log('User dismissed the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+        
+        // Register Service Worker
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    // Create service worker script as a blob
+                    const swContent = `
+                        const CACHE_NAME = 'layer0-v1';
+                        const urlsToCache = [
+                            './',
+                            'data:application/manifest+json;base64,ewogICJuYW1lIjogIkxheWVyMCBEZWNpc2lvbiBNYXBwZXIiLAogICJzaG9ydF9uYW1lIjogIkxheWVyMCIsCiAgImRlc2NyaXB0aW9uIjogIkEgZGVjaXNpb24gbWFwcGluZyBQV0EiLAogICJpY29ucyI6IFt7CiAgICAic3JjIjogImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBQUVBQUFJQ0FJSUFBQUFBT1pZQ0FBQUFBQVhOUUJBQUFBQ2tsRVFWUjRBZTJCa1lXeHNZVzUwYVdacFpYY0FBQUFBSlhSRldIUmtZWFJoTENCcGMzUmxZMmh2YjJ3QUFBQUJKUlU1RXJrSmdnZz09IiwKICAgICJ0eXBlIjogImltYWdlL3BuZyIsCiAgICAic2l6ZXMiOiAiMTkyeDE5MiIKICB9XSwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJ0aGVtZV9jb2xvciI6ICIjMGYwZjE1IiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMGYwZjE1Igp9',
+                            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEvElEQVR4nO3Y0ZHbOBAEUPpCUv4xKCXfz6lOVkleUgSIAfq9ALbE'
+                        ];
+                        
+                        self.addEventListener('install', event => {
+                            event.waitUntil(
+                                caches.open(CACHE_NAME)
+                                    .then(cache => {
+                                        return cache.addAll(urlsToCache);
+                                    })
+                            );
+                        });
+                        
+                        self.addEventListener('activate', event => {
+                            event.waitUntil(
+                                caches.keys().then(cacheNames => {
+                                    return Promise.all(
+                                        cacheNames.map(cacheName => {
+                                            if (cacheName !== CACHE_NAME) {
+                                                return caches.delete(cacheName);
+                                            }
+                                        })
+                                    );
+                                })
+                            );
+                        });
+                        
+                        self.addEventListener('fetch', event => {
+                            event.respondWith(
+                                caches.match(event.request)
+                                    .then(response => {
+                                        return response || fetch(event.request);
+                                    })
+                            );
+                        });
+                    `;
+                    
+                    const blob = new Blob([swContent], { type: 'application/javascript' });
+                    const swUrl = URL.createObjectURL(blob);
+                    
+                    navigator.serviceWorker.register(swUrl)
+                        .then(registration => {
+                            console.log('Service Worker registered with scope:', registration.scope);
+                        })
+                        .catch(error => {
+                            console.error('Service Worker registration failed:', error);
+                        });
+                });
+            }
+        }
+        
+        // Initialize the app
+        window.onload = function() {
+            init();
+            registerServiceWorker();
+            
+            // Add Font Awesome icons (inline for offline use)
+            const faIcons = document.createElement('style');
+            faIcons.innerHTML = `
+                .fas {
+                    -moz-osx-font-smoothing: grayscale;
+                    -webkit-font-smoothing: antialiased;
+                    display: inline-block;
+                    font-style: normal;
+                    font-variant: normal;
+                    text-rendering: auto;
+                    line-height: 1;
+                }
+                .fa-download:before { content: "\\f019"; }
+                .fa-times:before { content: "\\f00d"; }
+                .fa-wifi-slash:before { content: "\\f6ac"; }
+                .fa-plus:before { content: "\\f067"; }
+                .fa-arrow-left:before { content: "\\f060"; }
+                .fa-save:before { content: "\\f0c7"; }
+                .fa-history:before { content: "\\f1da"; }
+                .fa-trash:before { content: "\\f1f8"; }
+                .fa-home:before { content: "\\f015"; }
+                .fa-eye:before { content: "\\f06e"; }
+                .fa-check:before { content: "\\f00c"; }
+            `;
+            document.head.appendChild(faIcons);
+        };
+    })();
+    </script>
 </body>
 </html>
